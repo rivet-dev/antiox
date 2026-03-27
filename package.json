@@ -2,7 +2,7 @@
 	"name": "antiox",
 	"version": "0.1.0",
 	"description": "I Wish I Was Writing Rust. Small utilities for Rust/Tokio-like primitives in TypeScript.",
-	"license": "Apache-2.0",
+	"license": "MIT",
 	"type": "module",
 	"private": true,
 	"files": ["dist", "src", "package.json"],
