@@ -2,7 +2,11 @@
 
 **I Wish I Was Writing Rust** (Anti Oxide)
 
-Small utilities for Rust and Tokio-like primitives in TypeScript. Zero overhead, no custom DSL. API matches Rust/Tokio wherever possible.
+Zero cost abstractions... in JavaScript.
+
+Rust and Tokio-like primitives for TypeScript. No custom DSL, no wrapper types, no extra allocations. Just the control flow and concurrency patterns you miss from Rust, mapped onto native JS primitives.
+
+This library intentionally does **not** implement `Result`, `Option`, or `match`. These require wrapper objects on every call, which adds allocation overhead that defeats the purpose. TypeScript's `T | null`, union types, and `switch` already cover these patterns at zero cost.
 
 ## Install
 
