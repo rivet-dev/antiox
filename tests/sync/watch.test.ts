@@ -4,6 +4,7 @@ import {
 	WatchSender,
 	WatchReceiver,
 	RecvError,
+	SendError,
 } from "../../src/sync/watch";
 
 function delay(ms: number): Promise<void> {
@@ -140,5 +141,211 @@ describe("watch", () => {
 		expect(result).toBe(false);
 		await delay(20);
 		expect(woken).toBe(false);
+	});
+
+	it("send after sender close throws SendError", () => {
+		const [tx, _rx] = watch(0);
+		tx.close();
+		expect(() => tx.send(1)).toThrow(SendError);
+	});
+
+	it("SendError preserves the value", () => {
+		const [tx, _rx] = watch(0);
+		tx.close();
+		try {
+			tx.send(42);
+		} catch (e) {
+			expect(e).toBeInstanceOf(SendError);
+			expect((e as SendError<number>).value).toBe(42);
+		}
+	});
+
+	it("send throws when all receivers are closed", () => {
+		const [tx, rx] = watch(0);
+		rx.close();
+		expect(() => tx.send(1)).toThrow(SendError);
+	});
+
+	it("send throws when all receivers including clones are closed", () => {
+		const [tx, rx] = watch(0);
+		const rx2 = rx.clone();
+		rx.close();
+		tx.send(1);
+		rx2.close();
+		expect(() => tx.send(2)).toThrow(SendError);
+	});
+
+	it("sendIfModified returns false when sender is closed", () => {
+		const [tx, _rx] = watch(0);
+		tx.close();
+		const result = tx.sendIfModified(() => true);
+		expect(result).toBe(false);
+	});
+
+	it("sendIfModified returns false when all receivers closed", () => {
+		const [tx, rx] = watch(0);
+		rx.close();
+		const result = tx.sendIfModified(() => true);
+		expect(result).toBe(false);
+	});
+
+	it("changed() resolves immediately when value is unseen", async () => {
+		const [tx, rx] = watch(0);
+		tx.send(1);
+		await rx.changed();
+		expect(rx.borrow()).toBe(1);
+	});
+
+	it("multiple receivers all wake on send", async () => {
+		const [tx, rx] = watch(0);
+		const rx2 = tx.subscribe();
+		rx.borrowAndUpdate();
+		rx2.borrowAndUpdate();
+
+		let woke1 = false;
+		let woke2 = false;
+		const p1 = rx.changed().then(() => { woke1 = true; });
+		const p2 = rx2.changed().then(() => { woke2 = true; });
+
+		tx.send(1);
+		await Promise.all([p1, p2]);
+		expect(woke1).toBe(true);
+		expect(woke2).toBe(true);
+	});
+
+	it("clone receiver inherits seen version", async () => {
+		const [tx, rx] = watch(0);
+		tx.send(1);
+		rx.borrowAndUpdate();
+		const cloned = rx.clone();
+
+		let resolved = false;
+		cloned.changed().then(() => { resolved = true; });
+
+		await delay(10);
+		expect(resolved).toBe(false);
+
+		tx.send(2);
+		await delay(10);
+		expect(resolved).toBe(true);
+	});
+
+	it("clone receiver that has not seen initial value resolves changed() immediately", async () => {
+		const [tx, rx] = watch(0);
+		tx.send(1);
+		const cloned = rx.clone();
+		await cloned.changed();
+		expect(cloned.borrowAndUpdate()).toBe(1);
+	});
+
+	it("receiver close is idempotent", () => {
+		const [_tx, rx] = watch(0);
+		rx.close();
+		rx.close();
+	});
+
+	it("sender close is idempotent", () => {
+		const [tx, _rx] = watch(0);
+		tx.close();
+		tx.close();
+	});
+
+	it("Symbol.dispose on sender closes it", () => {
+		const [tx, rx] = watch(0);
+		rx.borrowAndUpdate();
+		tx[Symbol.dispose]();
+		expect(() => tx.send(1)).toThrow(SendError);
+	});
+
+	it("Symbol.dispose on receiver closes it", () => {
+		const [tx, rx] = watch(0);
+		rx[Symbol.dispose]();
+		expect(tx.isClosed()).toBe(true);
+	});
+
+	it("borrow does not advance seen version", async () => {
+		const [tx, rx] = watch(0);
+		tx.send(1);
+		rx.borrow();
+		await rx.changed();
+		expect(rx.borrowAndUpdate()).toBe(1);
+	});
+
+	it("borrowAndUpdate advances seen version so changed() blocks", async () => {
+		const [tx, rx] = watch(0);
+		tx.send(1);
+		rx.borrowAndUpdate();
+
+		let resolved = false;
+		rx.changed().then(() => { resolved = true; });
+		await delay(10);
+		expect(resolved).toBe(false);
+
+		tx.send(2);
+		await delay(10);
+		expect(resolved).toBe(true);
+	});
+
+	it("sender close rejects changed() on all receivers", async () => {
+		const [tx, rx] = watch(0);
+		const rx2 = tx.subscribe();
+		rx.borrowAndUpdate();
+		rx2.borrowAndUpdate();
+
+		const p1 = rx.changed();
+		const p2 = rx2.changed();
+		tx.close();
+
+		await expect(p1).rejects.toThrow(RecvError);
+		await expect(p2).rejects.toThrow(RecvError);
+	});
+
+	it("borrow still works after sender close", () => {
+		const [tx, rx] = watch(42);
+		tx.close();
+		expect(rx.borrow()).toBe(42);
+	});
+
+	it("isClosed accounts for subscribed receivers", () => {
+		const [tx, rx] = watch(0);
+		const rx2 = tx.subscribe();
+		rx.close();
+		expect(tx.isClosed()).toBe(false);
+		rx2.close();
+		expect(tx.isClosed()).toBe(true);
+	});
+
+	it("subscribe increments receiver count after original close", () => {
+		const [tx, rx] = watch(0);
+		rx.close();
+		expect(tx.isClosed()).toBe(true);
+		const rx2 = tx.subscribe();
+		expect(tx.isClosed()).toBe(false);
+		rx2.close();
+		expect(tx.isClosed()).toBe(true);
+	});
+
+	it("version increments correctly across multiple sends", async () => {
+		const [tx, rx] = watch(0);
+		rx.borrowAndUpdate();
+
+		tx.send(1);
+		await rx.changed();
+		rx.borrowAndUpdate();
+
+		tx.send(2);
+		await rx.changed();
+		rx.borrowAndUpdate();
+
+		tx.send(3);
+		await rx.changed();
+		expect(rx.borrowAndUpdate()).toBe(3);
+	});
+
+	it("changed() after sender close rejects even if value was unseen", async () => {
+		const [tx, rx] = watch(0);
+		tx.send(1);
+		tx.close();
+		await expect(rx.changed()).rejects.toThrow(RecvError);
 	});
 });

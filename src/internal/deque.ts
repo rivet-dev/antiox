@@ -1,4 +1,3 @@
-/** Simple ring buffer for O(1) push/shift. */
 export class Deque<T> {
 	#buf: (T | undefined)[];
 	#head = 0;

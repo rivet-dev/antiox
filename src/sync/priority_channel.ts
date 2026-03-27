@@ -1,10 +1,5 @@
 import { BinaryHeap } from "../collections/binary_heap";
 
-// ============================================================================
-// Errors
-// ============================================================================
-
-/** Thrown when sending on a closed priority channel. */
 export class SendError<T> extends Error {
 	readonly value: T;
 	constructor(value: T) {
@@ -14,7 +9,6 @@ export class SendError<T> extends Error {
 	}
 }
 
-/** Thrown by tryRecv when no message is available or channel is disconnected. */
 export class TryRecvError extends Error {
 	readonly kind: "empty" | "disconnected";
 	constructor(kind: "empty" | "disconnected") {
@@ -23,10 +17,6 @@ export class TryRecvError extends Error {
 		this.kind = kind;
 	}
 }
-
-// ============================================================================
-// Internal state
-// ============================================================================
 
 interface RecvWaiter<T> {
 	resolve: (value: T | null) => void;
@@ -39,19 +29,6 @@ interface PriorityChannelState<T> {
 	recvWaiters: Array<RecvWaiter<T>>;
 }
 
-// ============================================================================
-// Priority channel
-// ============================================================================
-
-/**
- * Create a priority channel. Messages are received in priority order
- * (highest priority first, determined by the comparator).
- *
- * Unlike a regular mpsc channel, this is unbounded and priority-ordered.
- *
- * @param compare - Comparator function. Positive return means `a` has higher
- *   priority. Defaults to max-ordering for numbers/strings.
- */
 export function channel<T>(
 	compare?: (a: T, b: T) => number,
 ): [Sender<T>, Receiver<T>] {
@@ -64,7 +41,6 @@ export function channel<T>(
 	return [new Sender(state), new Receiver(state)];
 }
 
-/** Sending half of a priority channel. */
 export class Sender<T> {
 	#state: PriorityChannelState<T>;
 	#dropped = false;
@@ -74,12 +50,11 @@ export class Sender<T> {
 		this.#state = state;
 	}
 
-	/** Send a value. Never blocks. Throws `SendError` if receiver closed. */
 	send(value: T): void {
 		if (this.#dropped) throw new SendError(value);
 		if (this.#state.closed) throw new SendError(value);
 
-		// If a receiver is waiting, we need to add to heap and give best.
+		// Add to heap first so the waiter always gets the highest-priority item.
 		if (this.#state.recvWaiters.length > 0) {
 			this.#state.heap.push(value);
 			const best = this.#state.heap.pop() as T;
@@ -90,19 +65,16 @@ export class Sender<T> {
 		this.#state.heap.push(value);
 	}
 
-	/** Check if the receiver has been closed. */
 	isClosed(): boolean {
 		return this.#state.closed;
 	}
 
-	/** Clone this sender. */
 	clone(): Sender<T> {
 		if (this.#dropped) throw new Error("Cannot clone a dropped Sender");
 		this.#state.senderCount++;
 		return new Sender(this.#state);
 	}
 
-	/** Drop this sender. When all senders drop, receiver gets null. */
 	close(): void {
 		if (this.#dropped) return;
 		this.#dropped = true;
@@ -120,7 +92,6 @@ export class Sender<T> {
 	}
 }
 
-/** Receiving half of a priority channel. Messages arrive in priority order. */
 export class Receiver<T> {
 	#state: PriorityChannelState<T>;
 	#closed = false;
@@ -130,10 +101,6 @@ export class Receiver<T> {
 		this.#state = state;
 	}
 
-	/**
-	 * Receive the highest-priority value.
-	 * Returns null when all senders dropped and heap is empty.
-	 */
 	async recv(): Promise<T | null> {
 		const s = this.#state;
 
@@ -149,10 +116,6 @@ export class Receiver<T> {
 		});
 	}
 
-	/**
-	 * Try to receive without waiting.
-	 * Throws TryRecvError if empty or disconnected.
-	 */
 	tryRecv(): T {
 		if (!this.#state.heap.isEmpty()) {
 			return this.#state.heap.pop() as T;
@@ -161,7 +124,6 @@ export class Receiver<T> {
 		throw new TryRecvError("empty");
 	}
 
-	/** Close the receiver. */
 	close(): void {
 		if (this.#closed) return;
 		this.#closed = true;

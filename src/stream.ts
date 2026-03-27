@@ -2,11 +2,6 @@ import { Semaphore } from "./sync/semaphore";
 import { unboundedChannel } from "./sync/mpsc";
 import { sleep as timeSleep, TimeoutError } from "./time";
 
-// ============================================================================
-// Transform
-// ============================================================================
-
-/** Apply a synchronous transform to each element. */
 export async function* map<T, U>(
 	source: AsyncIterable<T>,
 	fn: (item: T) => U,
@@ -16,7 +11,7 @@ export async function* map<T, U>(
 	}
 }
 
-/** Apply an async transform to each element. Named `andThen` to avoid JS thenable conflicts. */
+/** Named `andThen` to avoid JS thenable conflicts with `then`. */
 export async function* andThen<T, U>(
 	source: AsyncIterable<T>,
 	fn: (item: T) => Promise<U>,
@@ -26,7 +21,6 @@ export async function* andThen<T, U>(
 	}
 }
 
-/** Filter and map in one pass. Items where fn returns null/undefined are skipped. */
 export async function* filterMap<T, U>(
 	source: AsyncIterable<T>,
 	fn: (item: T) => U | null | undefined,
@@ -39,7 +33,6 @@ export async function* filterMap<T, U>(
 	}
 }
 
-/** Flatten nested async iterables into a single stream. */
 export async function* flatten<T>(
 	source: AsyncIterable<AsyncIterable<T>>,
 ): AsyncIterable<T> {
@@ -48,11 +41,6 @@ export async function* flatten<T>(
 	}
 }
 
-// ============================================================================
-// Filter
-// ============================================================================
-
-/** Keep only elements matching the predicate. */
 export async function* filter<T>(
 	source: AsyncIterable<T>,
 	fn: (item: T) => boolean,
@@ -64,7 +52,6 @@ export async function* filter<T>(
 	}
 }
 
-/** Yield the first n elements. */
 export async function* take<T>(
 	source: AsyncIterable<T>,
 	n: number,
@@ -77,7 +64,6 @@ export async function* take<T>(
 	}
 }
 
-/** Skip the first n elements. */
 export async function* skip<T>(
 	source: AsyncIterable<T>,
 	n: number,
@@ -92,7 +78,6 @@ export async function* skip<T>(
 	}
 }
 
-/** Yield elements while the predicate returns true, then stop. */
 export async function* takeWhile<T>(
 	source: AsyncIterable<T>,
 	fn: (item: T) => boolean,
@@ -103,7 +88,6 @@ export async function* takeWhile<T>(
 	}
 }
 
-/** Skip elements while the predicate returns true, then yield the rest. */
 export async function* skipWhile<T>(
 	source: AsyncIterable<T>,
 	fn: (item: T) => boolean,
@@ -118,14 +102,6 @@ export async function* skipWhile<T>(
 	}
 }
 
-// ============================================================================
-// Concurrency
-// ============================================================================
-
-/**
- * Run up to `concurrency` promises concurrently, yielding results in
- * completion order. The source must yield promises.
- */
 export function bufferUnordered<T>(
 	source: AsyncIterable<PromiseLike<T>>,
 	concurrency: number,
@@ -175,10 +151,6 @@ export function bufferUnordered<T>(
 	})();
 }
 
-/**
- * Run up to `concurrency` promises concurrently, yielding results in
- * source order. The source must yield promises.
- */
 export function buffered<T>(
 	source: AsyncIterable<PromiseLike<T>>,
 	concurrency: number,
@@ -240,11 +212,6 @@ export function buffered<T>(
 	})();
 }
 
-// ============================================================================
-// Combine
-// ============================================================================
-
-/** Interleave elements from multiple sources in completion order. */
 export function merge<T>(
 	...sources: AsyncIterable<T>[]
 ): AsyncIterable<T> {
@@ -276,7 +243,6 @@ export function merge<T>(
 	return rx;
 }
 
-/** Concatenate sources sequentially. */
 export async function* chain<T>(
 	...sources: AsyncIterable<T>[]
 ): AsyncIterable<T> {
@@ -285,7 +251,6 @@ export async function* chain<T>(
 	}
 }
 
-/** Pair elements from two sources. Stops when either is exhausted. */
 export async function* zip<T, U>(
 	a: AsyncIterable<T>,
 	b: AsyncIterable<U>,
@@ -308,11 +273,6 @@ export async function* zip<T, U>(
 	}
 }
 
-// ============================================================================
-// Batch
-// ============================================================================
-
-/** Group elements into arrays of the given size. The last chunk may be smaller. */
 export async function* chunks<T>(
 	source: AsyncIterable<T>,
 	size: number,
@@ -330,11 +290,6 @@ export async function* chunks<T>(
 	}
 }
 
-// ============================================================================
-// Rate
-// ============================================================================
-
-/** Rate-limit: yield at most one element per `ms` milliseconds. */
 export async function* throttle<T>(
 	source: AsyncIterable<T>,
 	ms: number,
@@ -351,7 +306,6 @@ export async function* throttle<T>(
 	}
 }
 
-/** Per-item timeout: throw TimeoutError if the source takes longer than `ms` to yield. */
 export async function* timeout<T>(
 	source: AsyncIterable<T>,
 	ms: number,
@@ -373,11 +327,6 @@ export async function* timeout<T>(
 	}
 }
 
-// ============================================================================
-// Consume
-// ============================================================================
-
-/** Collect all elements into an array. */
 export async function collect<T>(
 	source: AsyncIterable<T>,
 ): Promise<T[]> {
@@ -388,7 +337,6 @@ export async function collect<T>(
 	return result;
 }
 
-/** Reduce elements to a single value. */
 export async function fold<T, U>(
 	source: AsyncIterable<T>,
 	init: U,
@@ -401,11 +349,6 @@ export async function fold<T, U>(
 	return acc;
 }
 
-// ============================================================================
-// Debug
-// ============================================================================
-
-/** Execute a side effect for each element without modifying the stream. */
 export async function* tap<T>(
 	source: AsyncIterable<T>,
 	fn: (item: T) => void,
@@ -416,13 +359,8 @@ export async function* tap<T>(
 	}
 }
 
-// ============================================================================
-// Composition
-// ============================================================================
-
 type StreamOp<I = any, O = any> = (source: AsyncIterable<I>) => AsyncIterable<O>;
 
-/** Compose multiple stream operators left-to-right. */
 export function pipe<T>(source: AsyncIterable<T>, ...fns: StreamOp[]): AsyncIterable<any> {
 	return fns.reduce((acc, fn) => fn(acc), source as AsyncIterable<any>);
 }

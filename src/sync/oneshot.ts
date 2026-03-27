@@ -1,13 +1,3 @@
-/**
- * Single-use channel, mirroring tokio::sync::oneshot.
- *
- * Exactly one value can be sent from the sender to the receiver.
- * The receiver is awaitable via PromiseLike.
- *
- * @module
- */
-
-/** Thrown when the sender is dropped without sending a value. */
 export class RecvError extends Error {
 	constructor() {
 		super("Channel closed without sending a value");
@@ -15,7 +5,6 @@ export class RecvError extends Error {
 	}
 }
 
-/** Thrown when attempting to send on a closed or already-used channel. */
 export class SendError<T> extends Error {
 	readonly value: T;
 
@@ -36,12 +25,6 @@ interface SharedState<T> {
 	closedResolve: (() => void) | undefined;
 }
 
-/**
- * Create a oneshot channel.
- *
- * Returns a `[sender, receiver]` pair. The sender can send exactly one value,
- * and the receiver can be awaited to receive it.
- */
 export function oneshot<T>(): [OneshotSender<T>, OneshotReceiver<T>] {
 	const state: SharedState<T> = {
 		value: undefined,
@@ -56,21 +39,14 @@ export function oneshot<T>(): [OneshotSender<T>, OneshotReceiver<T>] {
 	return [new OneshotSender(state), new OneshotReceiver(state)];
 }
 
-/** Sends a single value to the paired {@link OneshotReceiver}. */
 export class OneshotSender<T> {
 	#state: SharedState<T>;
 	#dropped = false;
 
-	/** @internal */
 	constructor(state: SharedState<T>) {
 		this.#state = state;
 	}
 
-	/**
-	 * Send a value to the receiver.
-	 *
-	 * @throws {SendError} If the receiver has been closed or the sender has already sent.
-	 */
 	send(value: T): void {
 		if (this.#dropped) {
 			throw new SendError(value);
@@ -93,16 +69,10 @@ export class OneshotSender<T> {
 		}
 	}
 
-	/** Returns `true` if the receiver has been closed or dropped. */
 	isClosed(): boolean {
 		return this.#state.receiverClosed;
 	}
 
-	/**
-	 * Returns a promise that resolves when the receiver is dropped.
-	 *
-	 * Useful for detecting cancellation.
-	 */
 	closed(): Promise<void> {
 		if (this.#state.receiverClosed) {
 			return Promise.resolve();
@@ -112,7 +82,6 @@ export class OneshotSender<T> {
 		});
 	}
 
-	/** Drop the sender without sending a value. Rejects the receiver with {@link RecvError}. */
 	[Symbol.dispose](): void {
 		if (this.#dropped) {
 			return;
@@ -128,17 +97,11 @@ export class OneshotSender<T> {
 	}
 }
 
-/**
- * Receives a single value from the paired {@link OneshotSender}.
- *
- * Implements `PromiseLike` so it can be directly awaited.
- */
 export class OneshotReceiver<T> implements PromiseLike<T> {
 	#state: SharedState<T>;
 	#promise: Promise<T> | undefined;
 	#dropped = false;
 
-	/** @internal */
 	constructor(state: SharedState<T>) {
 		this.#state = state;
 	}
@@ -159,11 +122,6 @@ export class OneshotReceiver<T> implements PromiseLike<T> {
 		return this.#promise;
 	}
 
-	/**
-	 * PromiseLike implementation. Allows the receiver to be awaited directly.
-	 *
-	 * Resolves with the sent value, or rejects with {@link RecvError} if the sender is dropped.
-	 */
 	then<TResult1 = T, TResult2 = never>(
 		onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null | undefined,
 		onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined,
@@ -171,11 +129,6 @@ export class OneshotReceiver<T> implements PromiseLike<T> {
 		return this.#getPromise().then(onfulfilled, onrejected);
 	}
 
-	/**
-	 * Attempt to receive the value without waiting.
-	 *
-	 * @throws {RecvError} If no value has been sent yet or the sender was dropped.
-	 */
 	tryRecv(): T {
 		if (this.#state.sent) {
 			return this.#state.value as T;
@@ -183,7 +136,6 @@ export class OneshotReceiver<T> implements PromiseLike<T> {
 		throw new RecvError();
 	}
 
-	/** Close the receiver, signaling to the sender that no value is needed. */
 	close(): void {
 		if (this.#state.receiverClosed) {
 			return;
@@ -196,7 +148,6 @@ export class OneshotReceiver<T> implements PromiseLike<T> {
 		}
 	}
 
-	/** Dispose of the receiver, equivalent to {@link close}. */
 	[Symbol.dispose](): void {
 		if (this.#dropped) {
 			return;

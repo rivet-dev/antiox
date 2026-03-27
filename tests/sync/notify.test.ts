@@ -40,16 +40,13 @@ describe("Notify", () => {
 	it("stored permit: notifyOne before notified() resolves immediately", async () => {
 		const notify = new Notify();
 
-		// Store a permit before anyone waits.
 		notify.notifyOne();
 
-		// This should resolve immediately because a permit is stored.
 		let resolved = false;
 		const p = notify.notified().then(() => {
 			resolved = true;
 		});
 
-		// The promise created from Promise.resolve() resolves in a microtick.
 		await p;
 		expect(resolved).toBe(true);
 	});
@@ -72,17 +69,140 @@ describe("Notify", () => {
 	it("notifyWaiters does not store a permit", async () => {
 		const notify = new Notify();
 
-		// Call notifyWaiters with no waiters. This should NOT store a permit.
 		notify.notifyWaiters();
 
-		// A subsequent notified() should not resolve immediately.
 		let resolved = false;
 		notify.notified().then(() => {
 			resolved = true;
 		});
 
-		// Give microtasks a chance to flush.
 		await delay(20);
 		expect(resolved).toBe(false);
+	});
+
+	it("notifyOne with multiple waiters only wakes the first (FIFO)", async () => {
+		const notify = new Notify();
+		const order: number[] = [];
+
+		const w1 = notify.notified().then(() => order.push(1));
+		const w2 = notify.notified().then(() => order.push(2));
+
+		notify.notifyOne();
+		await w1;
+		await delay(10);
+
+		expect(order).toEqual([1]);
+	});
+
+	it("permit is consumed by first notified() caller", async () => {
+		const notify = new Notify();
+		notify.notifyOne();
+
+		await notify.notified();
+
+		let resolved = false;
+		notify.notified().then(() => {
+			resolved = true;
+		});
+
+		await delay(20);
+		expect(resolved).toBe(false);
+	});
+
+	it("multiple notifyOne calls only store one permit", async () => {
+		const notify = new Notify();
+		notify.notifyOne();
+		notify.notifyOne();
+		notify.notifyOne();
+
+		await notify.notified();
+
+		let resolved = false;
+		notify.notified().then(() => {
+			resolved = true;
+		});
+
+		await delay(20);
+		expect(resolved).toBe(false);
+	});
+
+	it("Symbol.dispose wakes all waiters", async () => {
+		const notify = new Notify();
+		const results: number[] = [];
+
+		const w1 = notify.notified().then(() => results.push(1));
+		const w2 = notify.notified().then(() => results.push(2));
+
+		notify[Symbol.dispose]();
+		await Promise.all([w1, w2]);
+
+		expect(results).toEqual([1, 2]);
+	});
+
+	it("FIFO ordering: waiters woken in registration order", async () => {
+		const notify = new Notify();
+		const order: number[] = [];
+
+		notify.notified().then(() => order.push(1));
+		notify.notified().then(() => order.push(2));
+		notify.notified().then(() => order.push(3));
+
+		notify.notifyOne();
+		await delay(5);
+		notify.notifyOne();
+		await delay(5);
+		notify.notifyOne();
+		await delay(5);
+
+		expect(order).toEqual([1, 2, 3]);
+	});
+
+	it("notifyWaiters with zero waiters is a no-op", () => {
+		const notify = new Notify();
+		notify.notifyWaiters();
+	});
+
+	it("notifyOne after notifyWaiters still works", async () => {
+		const notify = new Notify();
+
+		const w1 = notify.notified();
+		notify.notifyWaiters();
+		await w1;
+
+		const w2 = notify.notified();
+		notify.notifyOne();
+		await w2;
+	});
+
+	it("interleaved notify and notified calls", async () => {
+		const notify = new Notify();
+
+		notify.notifyOne();
+		await notify.notified();
+
+		const w = notify.notified();
+		notify.notifyOne();
+		await w;
+
+		notify.notifyOne();
+		await notify.notified();
+	});
+
+	it("notifyWaiters does not affect subsequent waiters", async () => {
+		const notify = new Notify();
+		const order: number[] = [];
+
+		const w1 = notify.notified().then(() => order.push(1));
+		notify.notifyWaiters();
+		await w1;
+
+		let laterResolved = false;
+		notify.notified().then(() => {
+			laterResolved = true;
+		});
+
+		await delay(20);
+		expect(laterResolved).toBe(false);
+		expect(order).toEqual([1]);
 	});
 });

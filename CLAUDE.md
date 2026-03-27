@@ -13,10 +13,12 @@ Small utilities for Rust/Tokio-like primitives in TypeScript. Zero overhead, no 
 
 ## API Reference
 
-Always reference the Tokio and Rust standard library docs when implementing or modifying modules:
+Before implementing or modifying any module, always look up the corresponding Tokio or Rust std docs first to verify correct type names, method signatures, and semantics:
 - Tokio: https://docs.rs/tokio/latest/tokio/
 - Rust std: https://doc.rust-lang.org/std/
 - tokio-stream: https://docs.rs/tokio-stream/latest/tokio_stream/
+
+Types within each module must match Tokio/Rust naming exactly. Each module is namespaced by its import path, so use `Sender`/`Receiver`/`channel()` (not `OneshotSender`/`oneshotChannel`). The barrel export `mod.ts` uses aliases to disambiguate.
 
 ## Module Structure
 
@@ -65,3 +67,26 @@ pnpm test        # Run tests
 - Structure and semantics match Tokio/Rust APIs
 - Zero runtime dependencies
 - Dual ESM/CJS output via tsup
+- No section separator comments (`// ====...`)
+- No file-level header comments or module-level docblocks
+- No JSDoc that restates the function/class name (e.g., `/** Sends a value */ send()`)
+- No `@internal` annotations
+- Only add comments that explain non-obvious logic (sentinel values, fairness policies, workarounds)
+
+## Testing
+
+- Every module in `src/` must have a corresponding test file in `tests/` with the same path structure.
+- Tests should be adversarial. Cover edge cases:
+  - Close/dispose idempotency (calling close() or Symbol.dispose twice)
+  - Operations on closed/disposed resources (send after close, recv after dispose)
+  - Falsy values as valid data (0, "", false, null, undefined)
+  - FIFO ordering guarantees
+  - Concurrent access (multiple waiters, multiple producers)
+  - Boundary conditions (capacity 0, capacity 1, empty collections, single element)
+  - Error propagation and error type correctness (name, message, instanceof)
+  - Symbol.dispose behavior on all disposable types
+- Test names should be descriptive enough to not need comments.
+
+## Writing Style
+
+- Never use em dashes. Use commas, semicolons, parentheses, or separate sentences instead.
