@@ -70,26 +70,26 @@ Bounded channels give you backpressure, `for await` gives you clean shutdown on 
 <!-- MODULE_TABLE_START -->
 | Module | Rust Equivalent | Minified | Gzip |
 |--------|-----------------|----------|------|
-| [`antiox/panic`](#antioxpanic) | [`std::panic!`, `std::todo!`, `std::unreachable!`](https://doc.rust-lang.org/std/) | 273 B | 199 B |
-| [`antiox/sync/mpsc`](#antioxsyncmpsc) | [`tokio::sync::mpsc`](https://docs.rs/tokio/latest/tokio/sync/mpsc/) | 5.1 KB | 1.4 KB |
-| [`antiox/sync/oneshot`](#antioxsynconeshot) | [`tokio::sync::oneshot`](https://docs.rs/tokio/latest/tokio/sync/oneshot/) | 1.7 KB | 625 B |
-| [`antiox/sync/watch`](#antioxsyncwatch) | [`tokio::sync::watch`](https://docs.rs/tokio/latest/tokio/sync/watch/) | 1.7 KB | 677 B |
-| [`antiox/sync/broadcast`](#antioxsyncbroadcast) | [`tokio::sync::broadcast`](https://docs.rs/tokio/latest/tokio/sync/broadcast/) | 2.4 KB | 936 B |
-| [`antiox/sync/semaphore`](#antioxsyncsemaphore) | [`tokio::sync::Semaphore`](https://docs.rs/tokio/latest/tokio/sync/struct.Semaphore.html) | 2.0 KB | 845 B |
-| [`antiox/sync/notify`](#antioxsyncnotify) | [`tokio::sync::Notify`](https://docs.rs/tokio/latest/tokio/sync/struct.Notify.html) | 934 B | 466 B |
-| [`antiox/sync/mutex`](#antioxsyncmutex) | [`tokio::sync::Mutex`](https://docs.rs/tokio/latest/tokio/sync/struct.Mutex.html) | 1.4 KB | 606 B |
-| [`antiox/sync/rwlock`](#antioxsyncrwlock) | [`tokio::sync::RwLock`](https://docs.rs/tokio/latest/tokio/sync/struct.RwLock.html) | 2.2 KB | 778 B |
-| [`antiox/sync/barrier`](#antioxsyncbarrier) | [`tokio::sync::Barrier`](https://docs.rs/tokio/latest/tokio/sync/struct.Barrier.html) | 1.1 KB | 528 B |
-| [`antiox/sync/select`](#antioxsyncselect) | [`tokio::select!`](https://docs.rs/tokio/latest/tokio/macro.select.html) | 338 B | 260 B |
-| [`antiox/sync/once_cell`](#antioxsynconcecell) | [`tokio::sync::OnceCell`](https://docs.rs/tokio/latest/tokio/sync/struct.OnceCell.html) | 699 B | 355 B |
-| [`antiox/sync/cancellation_token`](#antioxsynccancellationtoken) | [`tokio_util::sync::CancellationToken`](https://docs.rs/tokio-util/latest/tokio_util/sync/struct.CancellationToken.html) | 623 B | 357 B |
-| [`antiox/sync/drop_guard`](#antioxsyncdropguard) | [`tokio_util::sync::DropGuard`](https://docs.rs/tokio-util/latest/tokio_util/sync/struct.DropGuard.html) | 200 B | 169 B |
-| [`antiox/sync/priority_channel`](#antioxsyncprioritychannel) | Priority channel | 2.6 KB | 1.0 KB |
-| [`antiox/task`](#antioxtask) | [`tokio::task`](https://docs.rs/tokio/latest/tokio/task/) | 2.0 KB | 932 B |
-| [`antiox/time`](#antioxtime) | [`tokio::time`](https://docs.rs/tokio/latest/tokio/time/) | 936 B | 530 B |
-| [`antiox/stream`](#antioxstream) | [`tokio_stream` / `futures::stream`](https://docs.rs/tokio-stream/latest/tokio_stream/) | 10.4 KB | 3.0 KB |
-| [`antiox/collections/deque`](#antioxcollectionsdeque) | [`std::collections::VecDeque`](https://doc.rust-lang.org/std/collections/struct.VecDeque.html) | 1.3 KB | 493 B |
-| [`antiox/collections/binary_heap`](#antioxcollectionsbinaryheap) | [`std::collections::BinaryHeap`](https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html) | 994 B | 492 B |
+| `antiox/panic` | [`std::panic!`, `std::todo!`, `std::unreachable!`](https://doc.rust-lang.org/std/) | 273 B | 199 B |
+| `antiox/sync/mpsc` | [`tokio::sync::mpsc`](https://docs.rs/tokio/latest/tokio/sync/mpsc/) | 5.1 KB | 1.4 KB |
+| `antiox/sync/oneshot` | [`tokio::sync::oneshot`](https://docs.rs/tokio/latest/tokio/sync/oneshot/) | 1.7 KB | 625 B |
+| `antiox/sync/watch` | [`tokio::sync::watch`](https://docs.rs/tokio/latest/tokio/sync/watch/) | 1.7 KB | 677 B |
+| `antiox/sync/broadcast` | [`tokio::sync::broadcast`](https://docs.rs/tokio/latest/tokio/sync/broadcast/) | 2.4 KB | 936 B |
+| `antiox/sync/semaphore` | [`tokio::sync::Semaphore`](https://docs.rs/tokio/latest/tokio/sync/struct.Semaphore.html) | 2.0 KB | 845 B |
+| `antiox/sync/notify` | [`tokio::sync::Notify`](https://docs.rs/tokio/latest/tokio/sync/struct.Notify.html) | 934 B | 466 B |
+| `antiox/sync/mutex` | [`tokio::sync::Mutex`](https://docs.rs/tokio/latest/tokio/sync/struct.Mutex.html) | 1.4 KB | 606 B |
+| `antiox/sync/rwlock` | [`tokio::sync::RwLock`](https://docs.rs/tokio/latest/tokio/sync/struct.RwLock.html) | 2.2 KB | 778 B |
+| `antiox/sync/barrier` | [`tokio::sync::Barrier`](https://docs.rs/tokio/latest/tokio/sync/struct.Barrier.html) | 1.1 KB | 528 B |
+| `antiox/sync/select` | [`tokio::select!`](https://docs.rs/tokio/latest/tokio/macro.select.html) | 338 B | 260 B |
+| `antiox/sync/once_cell` | [`tokio::sync::OnceCell`](https://docs.rs/tokio/latest/tokio/sync/struct.OnceCell.html) | 699 B | 355 B |
+| `antiox/sync/cancellation_token` | [`tokio_util::sync::CancellationToken`](https://docs.rs/tokio-util/latest/tokio_util/sync/struct.CancellationToken.html) | 623 B | 357 B |
+| `antiox/sync/drop_guard` | [`tokio_util::sync::DropGuard`](https://docs.rs/tokio-util/latest/tokio_util/sync/struct.DropGuard.html) | 200 B | 169 B |
+| `antiox/sync/priority_channel` | Priority channel | 2.6 KB | 1.0 KB |
+| `antiox/task` | [`tokio::task`](https://docs.rs/tokio/latest/tokio/task/) | 2.0 KB | 932 B |
+| `antiox/time` | [`tokio::time`](https://docs.rs/tokio/latest/tokio/time/) | 936 B | 530 B |
+| `antiox/stream` | [`tokio_stream` / `futures::stream`](https://docs.rs/tokio-stream/latest/tokio_stream/) | 10.4 KB | 3.0 KB |
+| `antiox/collections/deque` | [`std::collections::VecDeque`](https://doc.rust-lang.org/std/collections/struct.VecDeque.html) | 1.3 KB | 493 B |
+| `antiox/collections/binary_heap` | [`std::collections::BinaryHeap`](https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html) | 994 B | 492 B |
 <!-- MODULE_TABLE_END -->
 
 ## Documentation

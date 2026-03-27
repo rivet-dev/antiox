@@ -52,10 +52,6 @@ function formatBytes(bytes: number): string {
 	return `${(bytes / 1024).toFixed(1)} KB`;
 }
 
-function anchorId(name: string): string {
-	return name.replace(/\//g, "").replace(/_/g, "");
-}
-
 // Build table
 const rows: string[] = [];
 rows.push("| Module | Rust Equivalent | Minified | Gzip |");
@@ -69,9 +65,8 @@ for (const [name, distFile, rustEquiv, docsUrl] of modules) {
 	const combined = Buffer.concat(bufs);
 	const minSize = formatBytes(combined.length);
 	const gzSize = formatBytes(gzipSync(combined).length);
-	const anchor = anchorId(name);
 	const equiv = docsUrl ? `[${rustEquiv}](${docsUrl})` : rustEquiv;
-	rows.push(`| [\`${name}\`](#${anchor}) | ${equiv} | ${minSize} | ${gzSize} |`);
+	rows.push(`| \`${name}\` | ${equiv} | ${minSize} | ${gzSize} |`);
 }
 
 const table = rows.join("\n");
