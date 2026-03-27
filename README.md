@@ -2,21 +2,25 @@
   <img src=".github/media/antiox.svg" alt="antiox" />
 </p>
 
-# antiox
+<h2 align="center">Antiox</h2>
 
-**I Wish I Was Writing Rust** (Anti Oxide)
+<h3 align="center">Zero-Cost Rust and Tokio-like primitives for TypeScript (Anti Oxide)</h3>
 
-Zero cost abstractions... in JavaScript.
+<p align="center">
+  No custom DSL, no wrapper types, no extra allocations.<br />
+  Just the control flow and concurrency patterns you miss from Rust, mapped onto native JS primitives.<br />
+  <i>Because let's be honest, you wish you were writing Rust instead.</i>
+</p>
 
-Rust and Tokio-like primitives for TypeScript. No custom DSL, no wrapper types, no extra allocations. Just the control flow and concurrency patterns you miss from Rust, mapped onto native JS primitives.
+<p align="center">
+  <a href="https://github.com/rivet-dev/antiox">GitHub</a> — <a href="https://www.npmjs.com/package/antiox">npm</a>
+</p>
 
-This library intentionally does **not** implement `Result`, `Option`, or `match`. These require wrapper objects on every call, which adds allocation overhead that defeats the purpose. TypeScript's `T | null`, union types, and `switch` already cover these patterns at zero cost.
-
-## Install
-
-```bash
+```
 npm install antiox
 ```
+
+This library intentionally does **not** implement `Result`, `Option`, or `match`. These require wrapper objects on every call, which adds allocation overhead that defeats the purpose. TypeScript's `T | null`, union types, and `switch` already cover these patterns at zero cost.
 
 ## The Actor Model with Channels + Tasks
 
