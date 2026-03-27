@@ -37,14 +37,14 @@
 				"default": "./dist/task.cjs"
 			}
 		},
-		"./unreachable": {
+		"./panic": {
 			"import": {
-				"types": "./dist/unreachable.d.ts",
-				"default": "./dist/unreachable.js"
+				"types": "./dist/panic.d.ts",
+				"default": "./dist/panic.js"
 			},
 			"require": {
-				"types": "./dist/unreachable.d.cts",
-				"default": "./dist/unreachable.cjs"
+				"types": "./dist/panic.d.cts",
+				"default": "./dist/panic.cjs"
 			}
 		}
 	},

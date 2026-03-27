@@ -16,9 +16,9 @@ Small utilities for Rust/Tokio-like primitives in TypeScript. Zero overhead, no 
 Mirrors Tokio/Rust module hierarchy:
 
 ```
+antiox/panic       → std::panic!, std::todo!, std::unreachable!
 antiox/sync/mpsc   → tokio::sync::mpsc
 antiox/task        → tokio::task
-antiox/unreachable → std::unreachable!
 ```
 
 When adding new modules, follow the same convention. For example:
@@ -35,6 +35,10 @@ Each module is a separate subpath export in `package.json` and a separate entry 
 pnpm build       # Build all modules
 pnpm check-types # Type check
 ```
+
+## Documentation
+
+- Keep `README.md` up to date when adding or changing modules.
 
 ## Code Style
 

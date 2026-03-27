@@ -71,13 +71,25 @@ for await (const result of set) {
 await yieldNow();
 ```
 
-### `antiox/unreachable`
+### `antiox/panic`
 
-Exhaustive type checking utility. Mirrors `std::unreachable!`.
+Diverging functions for halting execution. Mirrors `panic!`, `todo!`, and `unreachable!` from Rust.
 
 ```typescript
-import { unreachable } from "antiox/unreachable";
+import { panic, todo, unreachable } from "antiox/panic";
 
+// Halt with a message
+if (!isValid) panic("invariant violated");
+
+// Stub unfinished code
+function processEvent(event: Event): Result {
+  switch (event.type) {
+    case "click": return handleClick(event);
+    case "hover": todo("hover support");
+  }
+}
+
+// Exhaustive type checking
 type Direction = "north" | "south" | "east" | "west";
 
 function move(dir: Direction) {
