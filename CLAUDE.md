@@ -22,28 +22,28 @@ Types within each module must match Tokio/Rust naming exactly. Each module is na
 
 ## Module Structure
 
-Mirrors Tokio/Rust module hierarchy:
+Mirrors Tokio/Rust module hierarchy. Sorted alphabetically by export path. Keep this order consistent across `README.md` module table, documentation sections, and this list.
 
 ```
-antiox/panic            → std::panic!, std::todo!, std::unreachable!
-antiox/sync/mpsc        → tokio::sync::mpsc
-antiox/sync/oneshot     → tokio::sync::oneshot
-antiox/sync/watch       → tokio::sync::watch
-antiox/sync/broadcast   → tokio::sync::broadcast
-antiox/sync/semaphore   → tokio::sync::Semaphore
-antiox/sync/notify      → tokio::sync::Notify
-antiox/sync/mutex       → tokio::sync::Mutex
-antiox/sync/rwlock      → tokio::sync::RwLock
-antiox/sync/barrier     → tokio::sync::Barrier
-antiox/sync/select              → tokio::select!
-antiox/sync/once_cell           → tokio::sync::OnceCell
+antiox/collections/binary_heap  → std::collections::BinaryHeap
+antiox/collections/deque        → std::collections::VecDeque
+antiox/panic                    → std::panic!, std::todo!, std::unreachable!
+antiox/stream                   → tokio_stream / futures::stream
+antiox/sync/barrier             → tokio::sync::Barrier
+antiox/sync/broadcast           → tokio::sync::broadcast
 antiox/sync/cancellation_token  → tokio_util::sync::CancellationToken
 antiox/sync/drop_guard          → tokio_util::sync::DropGuard
+antiox/sync/mpsc                → tokio::sync::mpsc
+antiox/sync/mutex               → tokio::sync::Mutex
+antiox/sync/notify              → tokio::sync::Notify
+antiox/sync/once_cell           → tokio::sync::OnceCell
+antiox/sync/oneshot             → tokio::sync::oneshot
+antiox/sync/rwlock              → tokio::sync::RwLock
+antiox/sync/select              → tokio::select!
+antiox/sync/semaphore           → tokio::sync::Semaphore
+antiox/sync/watch               → tokio::sync::watch
 antiox/task                     → tokio::task (spawn, JoinHandle, JoinSet, joinAll, tryJoinAll)
 antiox/time                     → tokio::time (sleep, timeout, timeoutAt, interval)
-antiox/stream                   → tokio_stream / futures::stream
-antiox/collections/deque        → std::collections::VecDeque
-antiox/collections/binary_heap  → std::collections::BinaryHeap
 ```
 
 Each module is a separate subpath export in `package.json` and a separate entry point in `tsup.config.ts`.

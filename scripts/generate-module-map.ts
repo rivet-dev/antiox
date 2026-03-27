@@ -5,26 +5,27 @@ import { resolve, dirname } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 
 // Module map: [export path, dist file, rust equivalent, docs url]
+// Sorted alphabetically by export path
 const modules: [string, string, string, string][] = [
+	["antiox/collections/binary_heap", "dist/collections/binary_heap.js", "`std::collections::BinaryHeap`", "https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html"],
+	["antiox/collections/deque", "dist/collections/deque.js", "`std::collections::VecDeque`", "https://doc.rust-lang.org/std/collections/struct.VecDeque.html"],
 	["antiox/panic", "dist/panic.js", "`std::panic!`, `std::todo!`, `std::unreachable!`", "https://doc.rust-lang.org/std/"],
-	["antiox/sync/mpsc", "dist/sync/mpsc.js", "`tokio::sync::mpsc`", "https://docs.rs/tokio/latest/tokio/sync/mpsc/"],
-	["antiox/sync/oneshot", "dist/sync/oneshot.js", "`tokio::sync::oneshot`", "https://docs.rs/tokio/latest/tokio/sync/oneshot/"],
-	["antiox/sync/watch", "dist/sync/watch.js", "`tokio::sync::watch`", "https://docs.rs/tokio/latest/tokio/sync/watch/"],
-	["antiox/sync/broadcast", "dist/sync/broadcast.js", "`tokio::sync::broadcast`", "https://docs.rs/tokio/latest/tokio/sync/broadcast/"],
-	["antiox/sync/semaphore", "dist/sync/semaphore.js", "`tokio::sync::Semaphore`", "https://docs.rs/tokio/latest/tokio/sync/struct.Semaphore.html"],
-	["antiox/sync/notify", "dist/sync/notify.js", "`tokio::sync::Notify`", "https://docs.rs/tokio/latest/tokio/sync/struct.Notify.html"],
-	["antiox/sync/mutex", "dist/sync/mutex.js", "`tokio::sync::Mutex`", "https://docs.rs/tokio/latest/tokio/sync/struct.Mutex.html"],
-	["antiox/sync/rwlock", "dist/sync/rwlock.js", "`tokio::sync::RwLock`", "https://docs.rs/tokio/latest/tokio/sync/struct.RwLock.html"],
+	["antiox/stream", "dist/stream.js", "`tokio_stream` / `futures::stream`", "https://docs.rs/tokio-stream/latest/tokio_stream/"],
 	["antiox/sync/barrier", "dist/sync/barrier.js", "`tokio::sync::Barrier`", "https://docs.rs/tokio/latest/tokio/sync/struct.Barrier.html"],
-	["antiox/sync/select", "dist/sync/select.js", "`tokio::select!`", "https://docs.rs/tokio/latest/tokio/macro.select.html"],
-	["antiox/sync/once_cell", "dist/sync/once_cell.js", "`tokio::sync::OnceCell`", "https://docs.rs/tokio/latest/tokio/sync/struct.OnceCell.html"],
+	["antiox/sync/broadcast", "dist/sync/broadcast.js", "`tokio::sync::broadcast`", "https://docs.rs/tokio/latest/tokio/sync/broadcast/"],
 	["antiox/sync/cancellation_token", "dist/sync/cancellation_token.js", "`tokio_util::sync::CancellationToken`", "https://docs.rs/tokio-util/latest/tokio_util/sync/struct.CancellationToken.html"],
 	["antiox/sync/drop_guard", "dist/sync/drop_guard.js", "`tokio_util::sync::DropGuard`", "https://docs.rs/tokio-util/latest/tokio_util/sync/struct.DropGuard.html"],
+	["antiox/sync/mpsc", "dist/sync/mpsc.js", "`tokio::sync::mpsc`", "https://docs.rs/tokio/latest/tokio/sync/mpsc/"],
+	["antiox/sync/mutex", "dist/sync/mutex.js", "`tokio::sync::Mutex`", "https://docs.rs/tokio/latest/tokio/sync/struct.Mutex.html"],
+	["antiox/sync/notify", "dist/sync/notify.js", "`tokio::sync::Notify`", "https://docs.rs/tokio/latest/tokio/sync/struct.Notify.html"],
+	["antiox/sync/once_cell", "dist/sync/once_cell.js", "`tokio::sync::OnceCell`", "https://docs.rs/tokio/latest/tokio/sync/struct.OnceCell.html"],
+	["antiox/sync/oneshot", "dist/sync/oneshot.js", "`tokio::sync::oneshot`", "https://docs.rs/tokio/latest/tokio/sync/oneshot/"],
+	["antiox/sync/rwlock", "dist/sync/rwlock.js", "`tokio::sync::RwLock`", "https://docs.rs/tokio/latest/tokio/sync/struct.RwLock.html"],
+	["antiox/sync/select", "dist/sync/select.js", "`tokio::select!`", "https://docs.rs/tokio/latest/tokio/macro.select.html"],
+	["antiox/sync/semaphore", "dist/sync/semaphore.js", "`tokio::sync::Semaphore`", "https://docs.rs/tokio/latest/tokio/sync/struct.Semaphore.html"],
+	["antiox/sync/watch", "dist/sync/watch.js", "`tokio::sync::watch`", "https://docs.rs/tokio/latest/tokio/sync/watch/"],
 	["antiox/task", "dist/task.js", "`tokio::task`", "https://docs.rs/tokio/latest/tokio/task/"],
 	["antiox/time", "dist/time.js", "`tokio::time`", "https://docs.rs/tokio/latest/tokio/time/"],
-	["antiox/stream", "dist/stream.js", "`tokio_stream` / `futures::stream`", "https://docs.rs/tokio-stream/latest/tokio_stream/"],
-	["antiox/collections/deque", "dist/collections/deque.js", "`std::collections::VecDeque`", "https://doc.rust-lang.org/std/collections/struct.VecDeque.html"],
-	["antiox/collections/binary_heap", "dist/collections/binary_heap.js", "`std::collections::BinaryHeap`", "https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html"],
 ];
 
 function collectFiles(entryPath: string): Set<string> {
