@@ -22,6 +22,8 @@
 - **Rust-shaped:** The control flow and concurrency patterns you miss from Rust, mapped onto native JS primitives. Because let's be honest, you wish you were writing Rust instead.
 - **Lightweight:** Every module is tree-shakeable and tiny enough to ship as a transitive dependency without burdening downstream consumers.
 
+_And let's be honest, you probably wish you were writing Rust right now instead._
+
 ## Install
 
 ```
@@ -521,11 +523,12 @@ Rust crates that antiox doesn't cover, and what to use instead in TypeScript:
 
 ## Why not Effect?
 
-[Effect](https://effect.website) is excellent, but antiox exists for a different niche:
+[Effect](https://effect.website) is excellent, but Antiox exists for a different niche:
 
-- **Lightweight enough to ship inside libraries**: Effect's runtime is too heavy as a transitive dependency end users didn't opt into.
-- **Mirrors Rust/Tokio APIs**: Same structure, naming, and control flow across both codebases — the TypeScript reads like the Rust it was ported from.
-- **No new DSL**: Plain `async`/`await`, `AbortSignal`, and `AsyncIterator`. No wrapper types, no effect system, no generator-based control flow.
+- **Vanilla TypeScript syntax**: Plain `async`/`await`, `AbortSignal`, and `AsyncIterator`. No wrapper types, no effect system, no generator-based control flow.
+- **Predictable performance**: Effect memory allocations & performance impact is difficult to reason about. Antiox allows you to write vanilla TypeScript and clearly understand every memory allocation you make. This is not to say Effect is slow, but Antiox was built for performance-sensitive TypeScript (yes, that is an oxymoron).
+- **Lightweight enough to ship inside libraries**: Effect's runtime (not bundle size) is too heavy as a transitive dependency end users didn't opt into.
+- **Mirrors Rust/Tokio APIs**: Same structure, naming, and control flow. LLMs know Rust async well and this translates to Antiox perfectly.
 
 ## Compatibility
 
