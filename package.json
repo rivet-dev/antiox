@@ -1,6 +1,6 @@
 {
 	"name": "antiox",
-	"version": "0.1.0",
+	"version": "0.1.0-rc.1",
 	"description": "I Wish I Was Writing Rust. Small utilities for Rust/Tokio-like primitives in TypeScript.",
 	"license": "MIT",
 	"type": "module",
@@ -11,88 +11,214 @@
 	],
 	"exports": {
 		".": {
-			"import": { "types": "./dist/mod.d.ts", "default": "./dist/mod.js" },
-			"require": { "types": "./dist/mod.d.cts", "default": "./dist/mod.cjs" }
+			"import": {
+				"types": "./dist/mod.d.ts",
+				"default": "./dist/mod.js"
+			},
+			"require": {
+				"types": "./dist/mod.d.cts",
+				"default": "./dist/mod.cjs"
+			}
 		},
 		"./panic": {
-			"import": { "types": "./dist/panic.d.ts", "default": "./dist/panic.js" },
-			"require": { "types": "./dist/panic.d.cts", "default": "./dist/panic.cjs" }
+			"import": {
+				"types": "./dist/panic.d.ts",
+				"default": "./dist/panic.js"
+			},
+			"require": {
+				"types": "./dist/panic.d.cts",
+				"default": "./dist/panic.cjs"
+			}
 		},
 		"./sync/mpsc": {
-			"import": { "types": "./dist/sync/mpsc.d.ts", "default": "./dist/sync/mpsc.js" },
-			"require": { "types": "./dist/sync/mpsc.d.cts", "default": "./dist/sync/mpsc.cjs" }
+			"import": {
+				"types": "./dist/sync/mpsc.d.ts",
+				"default": "./dist/sync/mpsc.js"
+			},
+			"require": {
+				"types": "./dist/sync/mpsc.d.cts",
+				"default": "./dist/sync/mpsc.cjs"
+			}
 		},
 		"./sync/oneshot": {
-			"import": { "types": "./dist/sync/oneshot.d.ts", "default": "./dist/sync/oneshot.js" },
-			"require": { "types": "./dist/sync/oneshot.d.cts", "default": "./dist/sync/oneshot.cjs" }
+			"import": {
+				"types": "./dist/sync/oneshot.d.ts",
+				"default": "./dist/sync/oneshot.js"
+			},
+			"require": {
+				"types": "./dist/sync/oneshot.d.cts",
+				"default": "./dist/sync/oneshot.cjs"
+			}
 		},
 		"./sync/watch": {
-			"import": { "types": "./dist/sync/watch.d.ts", "default": "./dist/sync/watch.js" },
-			"require": { "types": "./dist/sync/watch.d.cts", "default": "./dist/sync/watch.cjs" }
+			"import": {
+				"types": "./dist/sync/watch.d.ts",
+				"default": "./dist/sync/watch.js"
+			},
+			"require": {
+				"types": "./dist/sync/watch.d.cts",
+				"default": "./dist/sync/watch.cjs"
+			}
 		},
 		"./sync/broadcast": {
-			"import": { "types": "./dist/sync/broadcast.d.ts", "default": "./dist/sync/broadcast.js" },
-			"require": { "types": "./dist/sync/broadcast.d.cts", "default": "./dist/sync/broadcast.cjs" }
+			"import": {
+				"types": "./dist/sync/broadcast.d.ts",
+				"default": "./dist/sync/broadcast.js"
+			},
+			"require": {
+				"types": "./dist/sync/broadcast.d.cts",
+				"default": "./dist/sync/broadcast.cjs"
+			}
 		},
 		"./sync/semaphore": {
-			"import": { "types": "./dist/sync/semaphore.d.ts", "default": "./dist/sync/semaphore.js" },
-			"require": { "types": "./dist/sync/semaphore.d.cts", "default": "./dist/sync/semaphore.cjs" }
+			"import": {
+				"types": "./dist/sync/semaphore.d.ts",
+				"default": "./dist/sync/semaphore.js"
+			},
+			"require": {
+				"types": "./dist/sync/semaphore.d.cts",
+				"default": "./dist/sync/semaphore.cjs"
+			}
 		},
 		"./sync/notify": {
-			"import": { "types": "./dist/sync/notify.d.ts", "default": "./dist/sync/notify.js" },
-			"require": { "types": "./dist/sync/notify.d.cts", "default": "./dist/sync/notify.cjs" }
+			"import": {
+				"types": "./dist/sync/notify.d.ts",
+				"default": "./dist/sync/notify.js"
+			},
+			"require": {
+				"types": "./dist/sync/notify.d.cts",
+				"default": "./dist/sync/notify.cjs"
+			}
 		},
 		"./sync/mutex": {
-			"import": { "types": "./dist/sync/mutex.d.ts", "default": "./dist/sync/mutex.js" },
-			"require": { "types": "./dist/sync/mutex.d.cts", "default": "./dist/sync/mutex.cjs" }
+			"import": {
+				"types": "./dist/sync/mutex.d.ts",
+				"default": "./dist/sync/mutex.js"
+			},
+			"require": {
+				"types": "./dist/sync/mutex.d.cts",
+				"default": "./dist/sync/mutex.cjs"
+			}
 		},
 		"./sync/rwlock": {
-			"import": { "types": "./dist/sync/rwlock.d.ts", "default": "./dist/sync/rwlock.js" },
-			"require": { "types": "./dist/sync/rwlock.d.cts", "default": "./dist/sync/rwlock.cjs" }
+			"import": {
+				"types": "./dist/sync/rwlock.d.ts",
+				"default": "./dist/sync/rwlock.js"
+			},
+			"require": {
+				"types": "./dist/sync/rwlock.d.cts",
+				"default": "./dist/sync/rwlock.cjs"
+			}
 		},
 		"./sync/barrier": {
-			"import": { "types": "./dist/sync/barrier.d.ts", "default": "./dist/sync/barrier.js" },
-			"require": { "types": "./dist/sync/barrier.d.cts", "default": "./dist/sync/barrier.cjs" }
+			"import": {
+				"types": "./dist/sync/barrier.d.ts",
+				"default": "./dist/sync/barrier.js"
+			},
+			"require": {
+				"types": "./dist/sync/barrier.d.cts",
+				"default": "./dist/sync/barrier.cjs"
+			}
 		},
 		"./sync/select": {
-			"import": { "types": "./dist/sync/select.d.ts", "default": "./dist/sync/select.js" },
-			"require": { "types": "./dist/sync/select.d.cts", "default": "./dist/sync/select.cjs" }
+			"import": {
+				"types": "./dist/sync/select.d.ts",
+				"default": "./dist/sync/select.js"
+			},
+			"require": {
+				"types": "./dist/sync/select.d.cts",
+				"default": "./dist/sync/select.cjs"
+			}
 		},
 		"./sync/once_cell": {
-			"import": { "types": "./dist/sync/once_cell.d.ts", "default": "./dist/sync/once_cell.js" },
-			"require": { "types": "./dist/sync/once_cell.d.cts", "default": "./dist/sync/once_cell.cjs" }
+			"import": {
+				"types": "./dist/sync/once_cell.d.ts",
+				"default": "./dist/sync/once_cell.js"
+			},
+			"require": {
+				"types": "./dist/sync/once_cell.d.cts",
+				"default": "./dist/sync/once_cell.cjs"
+			}
 		},
 		"./sync/cancellation_token": {
-			"import": { "types": "./dist/sync/cancellation_token.d.ts", "default": "./dist/sync/cancellation_token.js" },
-			"require": { "types": "./dist/sync/cancellation_token.d.cts", "default": "./dist/sync/cancellation_token.cjs" }
+			"import": {
+				"types": "./dist/sync/cancellation_token.d.ts",
+				"default": "./dist/sync/cancellation_token.js"
+			},
+			"require": {
+				"types": "./dist/sync/cancellation_token.d.cts",
+				"default": "./dist/sync/cancellation_token.cjs"
+			}
 		},
 		"./sync/drop_guard": {
-			"import": { "types": "./dist/sync/drop_guard.d.ts", "default": "./dist/sync/drop_guard.js" },
-			"require": { "types": "./dist/sync/drop_guard.d.cts", "default": "./dist/sync/drop_guard.cjs" }
+			"import": {
+				"types": "./dist/sync/drop_guard.d.ts",
+				"default": "./dist/sync/drop_guard.js"
+			},
+			"require": {
+				"types": "./dist/sync/drop_guard.d.cts",
+				"default": "./dist/sync/drop_guard.cjs"
+			}
 		},
 		"./sync/priority_channel": {
-			"import": { "types": "./dist/sync/priority_channel.d.ts", "default": "./dist/sync/priority_channel.js" },
-			"require": { "types": "./dist/sync/priority_channel.d.cts", "default": "./dist/sync/priority_channel.cjs" }
+			"import": {
+				"types": "./dist/sync/priority_channel.d.ts",
+				"default": "./dist/sync/priority_channel.js"
+			},
+			"require": {
+				"types": "./dist/sync/priority_channel.d.cts",
+				"default": "./dist/sync/priority_channel.cjs"
+			}
 		},
 		"./task": {
-			"import": { "types": "./dist/task.d.ts", "default": "./dist/task.js" },
-			"require": { "types": "./dist/task.d.cts", "default": "./dist/task.cjs" }
+			"import": {
+				"types": "./dist/task.d.ts",
+				"default": "./dist/task.js"
+			},
+			"require": {
+				"types": "./dist/task.d.cts",
+				"default": "./dist/task.cjs"
+			}
 		},
 		"./time": {
-			"import": { "types": "./dist/time.d.ts", "default": "./dist/time.js" },
-			"require": { "types": "./dist/time.d.cts", "default": "./dist/time.cjs" }
+			"import": {
+				"types": "./dist/time.d.ts",
+				"default": "./dist/time.js"
+			},
+			"require": {
+				"types": "./dist/time.d.cts",
+				"default": "./dist/time.cjs"
+			}
 		},
 		"./stream": {
-			"import": { "types": "./dist/stream.d.ts", "default": "./dist/stream.js" },
-			"require": { "types": "./dist/stream.d.cts", "default": "./dist/stream.cjs" }
+			"import": {
+				"types": "./dist/stream.d.ts",
+				"default": "./dist/stream.js"
+			},
+			"require": {
+				"types": "./dist/stream.d.cts",
+				"default": "./dist/stream.cjs"
+			}
 		},
 		"./collections/deque": {
-			"import": { "types": "./dist/collections/deque.d.ts", "default": "./dist/collections/deque.js" },
-			"require": { "types": "./dist/collections/deque.d.cts", "default": "./dist/collections/deque.cjs" }
+			"import": {
+				"types": "./dist/collections/deque.d.ts",
+				"default": "./dist/collections/deque.js"
+			},
+			"require": {
+				"types": "./dist/collections/deque.d.cts",
+				"default": "./dist/collections/deque.cjs"
+			}
 		},
 		"./collections/binary_heap": {
-			"import": { "types": "./dist/collections/binary_heap.d.ts", "default": "./dist/collections/binary_heap.js" },
-			"require": { "types": "./dist/collections/binary_heap.d.cts", "default": "./dist/collections/binary_heap.cjs" }
+			"import": {
+				"types": "./dist/collections/binary_heap.d.ts",
+				"default": "./dist/collections/binary_heap.js"
+			},
+			"require": {
+				"types": "./dist/collections/binary_heap.d.cts",
+				"default": "./dist/collections/binary_heap.cjs"
+			}
 		}
 	},
 	"scripts": {
