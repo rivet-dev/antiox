@@ -39,7 +39,6 @@ antiox/sync/select              → tokio::select!
 antiox/sync/once_cell           → tokio::sync::OnceCell
 antiox/sync/cancellation_token  → tokio_util::sync::CancellationToken
 antiox/sync/drop_guard          → tokio_util::sync::DropGuard
-antiox/sync/priority_channel    → priority queue-backed mpsc
 antiox/task                     → tokio::task (spawn, JoinHandle, JoinSet, joinAll, tryJoinAll)
 antiox/time                     → tokio::time (sleep, timeout, timeoutAt, interval)
 antiox/stream                   → tokio_stream / futures::stream
@@ -60,11 +59,13 @@ pnpm test        # Run tests
 ## Documentation
 
 - Keep `README.md` up to date when adding or changing modules.
+- Keep `COMPATIBILITY.md` up to date when adding, removing, or modifying any API. Every exported function, class, and method must be tracked against its Rust equivalent. Mark new items as implemented, and document why anything is intentionally skipped.
 
 ## Code Style
 
 - camelCase for method/function names (TypeScript convention)
 - Structure and semantics match Tokio/Rust APIs
+- Function and type names must match their Rust/Tokio equivalents (e.g., `inspect` not `tap`, `flatMap` not `concatMap`). If a Rust name conflicts with a JS builtin (e.g., `then` conflicts with Promise thenables), use the closest alternative and leave a comment explaining why. Always look up the Rust docs before naming.
 - Zero runtime dependencies
 - Dual ESM/CJS output via tsup
 - No section separator comments (`// ====...`)

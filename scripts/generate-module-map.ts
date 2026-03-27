@@ -20,7 +20,6 @@ const modules: [string, string, string, string][] = [
 	["antiox/sync/once_cell", "dist/sync/once_cell.js", "`tokio::sync::OnceCell`", "https://docs.rs/tokio/latest/tokio/sync/struct.OnceCell.html"],
 	["antiox/sync/cancellation_token", "dist/sync/cancellation_token.js", "`tokio_util::sync::CancellationToken`", "https://docs.rs/tokio-util/latest/tokio_util/sync/struct.CancellationToken.html"],
 	["antiox/sync/drop_guard", "dist/sync/drop_guard.js", "`tokio_util::sync::DropGuard`", "https://docs.rs/tokio-util/latest/tokio_util/sync/struct.DropGuard.html"],
-	["antiox/sync/priority_channel", "dist/sync/priority_channel.js", "Priority channel", ""],
 	["antiox/task", "dist/task.js", "`tokio::task`", "https://docs.rs/tokio/latest/tokio/task/"],
 	["antiox/time", "dist/time.js", "`tokio::time`", "https://docs.rs/tokio/latest/tokio/time/"],
 	["antiox/stream", "dist/stream.js", "`tokio_stream` / `futures::stream`", "https://docs.rs/tokio-stream/latest/tokio_stream/"],

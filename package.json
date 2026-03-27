@@ -1,7 +1,7 @@
 {
 	"name": "antiox",
 	"version": "0.1.0-rc.2",
-	"description": "I Wish I Was Writing Rust. Small utilities for Rust/Tokio-like primitives in TypeScript.",
+	"description": "Rust- and Tokio-like async primitives for TypeScript.",
 	"license": "MIT",
 	"type": "module",
 	"files": [
@@ -158,16 +158,6 @@
 			"require": {
 				"types": "./dist/sync/drop_guard.d.cts",
 				"default": "./dist/sync/drop_guard.cjs"
-			}
-		},
-		"./sync/priority_channel": {
-			"import": {
-				"types": "./dist/sync/priority_channel.d.ts",
-				"default": "./dist/sync/priority_channel.js"
-			},
-			"require": {
-				"types": "./dist/sync/priority_channel.d.cts",
-				"default": "./dist/sync/priority_channel.cjs"
 			}
 		},
 		"./task": {

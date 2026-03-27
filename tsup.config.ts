@@ -17,7 +17,6 @@ export default defineConfig({
 		"src/sync/once_cell.ts",
 		"src/sync/cancellation_token.ts",
 		"src/sync/drop_guard.ts",
-		"src/sync/priority_channel.ts",
 		"src/task.ts",
 		"src/time.ts",
 		"src/stream.ts",

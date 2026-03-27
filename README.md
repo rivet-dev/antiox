@@ -32,6 +32,7 @@ The biggest win from antiox is **channels** and **streams** — primitives that 
 ```typescript
 import { channel } from "antiox/sync/mpsc";
 import { oneshot, OneshotSender } from "antiox/sync/oneshot";
+import { unreachable } from "antiox/panic";
 import { spawn } from "antiox/task";
 
 type Msg =
@@ -50,6 +51,8 @@ spawn(async () => {
       case "get":
         msg.resTx.send(count);
         break;
+      default:
+        unreachable(msg);
     }
   }
 });
@@ -63,7 +66,11 @@ await tx.send({ type: "get", resTx });
 const value = await resRx;
 ```
 
-Bounded channels give you backpressure, `for await` gives you clean shutdown on disconnect, and oneshot channels give you typed request-response — all without locks or shared mutable state.
+Bounded channels give you backpressure, `for await` gives you clean shutdown on disconnect, and oneshot channels give you typed request-response, all without locks or shared mutable state.
+
+### Exhaustive matching with `unreachable`
+
+The `unreachable(x: never)` function provides compile-time exhaustiveness checking for switch statements. If you add a new variant to `Msg` but forget to handle it, TypeScript will error because the unhandled variant is not assignable to `never`.
 
 ## Modules
 
@@ -84,10 +91,9 @@ Bounded channels give you backpressure, `for await` gives you clean shutdown on 
 | `antiox/sync/once_cell` | [`tokio::sync::OnceCell`](https://docs.rs/tokio/latest/tokio/sync/struct.OnceCell.html) | 699 B | 355 B |
 | `antiox/sync/cancellation_token` | [`tokio_util::sync::CancellationToken`](https://docs.rs/tokio-util/latest/tokio_util/sync/struct.CancellationToken.html) | 623 B | 357 B |
 | `antiox/sync/drop_guard` | [`tokio_util::sync::DropGuard`](https://docs.rs/tokio-util/latest/tokio_util/sync/struct.DropGuard.html) | 200 B | 169 B |
-| `antiox/sync/priority_channel` | Priority channel | 2.6 KB | 1.0 KB |
 | `antiox/task` | [`tokio::task`](https://docs.rs/tokio/latest/tokio/task/) | 2.0 KB | 932 B |
 | `antiox/time` | [`tokio::time`](https://docs.rs/tokio/latest/tokio/time/) | 936 B | 530 B |
-| `antiox/stream` | [`tokio_stream` / `futures::stream`](https://docs.rs/tokio-stream/latest/tokio_stream/) | 10.4 KB | 3.0 KB |
+| `antiox/stream` | [`tokio_stream` / `futures::stream`](https://docs.rs/tokio-stream/latest/tokio_stream/) | 12.0 KB | 3.5 KB |
 | `antiox/collections/deque` | [`std::collections::VecDeque`](https://doc.rust-lang.org/std/collections/struct.VecDeque.html) | 1.3 KB | 493 B |
 | `antiox/collections/binary_heap` | [`std::collections::BinaryHeap`](https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html) | 994 B | 492 B |
 <!-- MODULE_TABLE_END -->
@@ -402,25 +408,6 @@ guard.disarm(); // or prevent cleanup
 </details>
 
 <details>
-<summary><code>antiox/sync/priority_channel</code></summary>
-
-Priority queue-backed channel. Messages received in priority order.
-
-```typescript
-import { channel } from "antiox/sync/priority_channel";
-
-const [tx, rx] = channel<number>();
-tx.send(3);
-tx.send(1);
-tx.send(2);
-console.log(await rx.recv()); // 3 (highest first)
-console.log(await rx.recv()); // 2
-console.log(await rx.recv()); // 1
-```
-
-</details>
-
-<details>
 <summary><code>antiox/time</code></summary>
 
 Timer primitives with AbortSignal integration.
@@ -537,6 +524,10 @@ Rust crates that antiox doesn't cover, and what to use instead in TypeScript:
 - **Lightweight enough to ship inside libraries**: Effect's runtime is too heavy as a transitive dependency end users didn't opt into.
 - **Mirrors Rust/Tokio APIs**: Same structure, naming, and control flow across both codebases — the TypeScript reads like the Rust it was ported from.
 - **No new DSL**: Plain `async`/`await`, `AbortSignal`, and `AsyncIterator`. No wrapper types, no effect system, no generator-based control flow.
+
+## Compatibility
+
+See [COMPATIBILITY.md](COMPATIBILITY.md) for a detailed comparison of every module against its Rust/Tokio equivalent, including intentionally skipped APIs and reasons.
 
 ## License
 

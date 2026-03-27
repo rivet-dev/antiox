@@ -51,16 +51,18 @@ git push origin main
 git push origin v<version>
 ```
 
-### 7. Publish to npm
+### 7. Trigger GitHub release workflow
 ```bash
-npm publish --tag <latest|rc>
+gh workflow run release.yml -f version=<version> -f npm-tag=<latest|rc>
 ```
+This dispatches the `release.yml` workflow, which checks out the tag, builds, publishes to npm, and creates a GitHub release.
 
 ### 8. Report
-Show the user: final commit hash, tag, and npm publish result.
+Show the user: final commit hash, tag, and the link to the triggered workflow run.
 
 ## Rules
 - Never skip git checks unless the user explicitly asks.
 - Never force-push.
 - Always build + test before publishing.
+- Never publish to npm locally; always use the GitHub release workflow.
 - If anything fails, stop and report — do not retry automatically.

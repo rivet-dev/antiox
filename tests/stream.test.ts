@@ -15,12 +15,24 @@ import {
 	chain,
 	zip,
 	flatten,
-	tap,
+	inspect,
 	pipe,
 	bufferUnordered,
 	buffered,
 	throttle,
 	timeout,
+	enumerate,
+	scan,
+	flatMap,
+	mapWhile,
+	takeUntil,
+	chunksTimeout,
+	peekable,
+	count,
+	any,
+	all,
+	forEach,
+	forEachConcurrent,
 } from "../src/stream";
 import { sleep, TimeoutError } from "../src/time";
 
@@ -207,11 +219,11 @@ describe("flatten", () => {
 	});
 });
 
-describe("tap", () => {
+describe("inspect", () => {
 	it("executes side effects without modifying stream", async () => {
 		const seen: number[] = [];
 		const result = await collect(
-			tap(fromArray([1, 2, 3]), (x) => seen.push(x)),
+			inspect(fromArray([1, 2, 3]), (x) => seen.push(x)),
 		);
 		expect(result).toEqual([1, 2, 3]);
 		expect(seen).toEqual([1, 2, 3]);
@@ -529,10 +541,10 @@ describe("flatten - edge cases", () => {
 	});
 });
 
-describe("tap - edge cases", () => {
+describe("inspect - edge cases", () => {
 	it("empty source calls nothing", async () => {
 		let called = false;
-		const result = await collect(tap(fromArray([]), () => { called = true; }));
+		const result = await collect(inspect(fromArray([]), () => { called = true; }));
 		expect(result).toEqual([]);
 		expect(called).toBe(false);
 	});
@@ -642,5 +654,290 @@ describe("timeout", () => {
 	it("empty source", async () => {
 		const result = await collect(timeout(fromArray([]), 100));
 		expect(result).toEqual([]);
+	});
+});
+
+describe("enumerate", () => {
+	it("yields [index, value] tuples", async () => {
+		const result = await collect(enumerate(fromArray(["a", "b", "c"])));
+		expect(result).toEqual([
+			[0, "a"],
+			[1, "b"],
+			[2, "c"],
+		]);
+	});
+
+	it("empty source", async () => {
+		const result = await collect(enumerate(fromArray([])));
+		expect(result).toEqual([]);
+	});
+
+	it("indices start at 0", async () => {
+		const result = await collect(enumerate(fromArray([42])));
+		expect(result).toEqual([[0, 42]]);
+	});
+});
+
+describe("scan", () => {
+	it("running sum", async () => {
+		const result = await collect(scan(fromArray([1, 2, 3, 4]), 0, (acc, x) => acc + x));
+		expect(result).toEqual([1, 3, 6, 10]);
+	});
+
+	it("empty source returns nothing", async () => {
+		const result = await collect(scan(fromArray<number>([]), 0, (acc, x) => acc + x));
+		expect(result).toEqual([]);
+	});
+
+	it("single element", async () => {
+		const result = await collect(scan(fromArray([5]), 10, (acc, x) => acc + x));
+		expect(result).toEqual([15]);
+	});
+});
+
+describe("flatMap", () => {
+	it("expands each element to multiple", async () => {
+		const result = await collect(
+			flatMap(fromArray([1, 2, 3]), (x) => fromArray([x, x * 10])),
+		);
+		expect(result).toEqual([1, 10, 2, 20, 3, 30]);
+	});
+
+	it("empty source", async () => {
+		const result = await collect(
+			flatMap(fromArray<number>([]), (x) => fromArray([x])),
+		);
+		expect(result).toEqual([]);
+	});
+
+	it("fn returns empty iterables", async () => {
+		const result = await collect(
+			flatMap(fromArray([1, 2, 3]), () => fromArray([])),
+		);
+		expect(result).toEqual([]);
+	});
+});
+
+describe("mapWhile", () => {
+	it("stops at first null return", async () => {
+		const result = await collect(
+			mapWhile(fromArray([1, 2, 3, 4, 5]), (x) => (x < 4 ? x * 2 : null)),
+		);
+		expect(result).toEqual([2, 4, 6]);
+	});
+
+	it("all pass (never null)", async () => {
+		const result = await collect(
+			mapWhile(fromArray([1, 2, 3]), (x) => x * 10),
+		);
+		expect(result).toEqual([10, 20, 30]);
+	});
+
+	it("first element returns null (yields nothing)", async () => {
+		const result = await collect(
+			mapWhile(fromArray([1, 2, 3]), () => null),
+		);
+		expect(result).toEqual([]);
+	});
+
+	it("empty source", async () => {
+		const result = await collect(
+			mapWhile(fromArray<number>([]), (x) => x),
+		);
+		expect(result).toEqual([]);
+	});
+});
+
+describe("takeUntil", () => {
+	it("stops when signal resolves", async () => {
+		async function* slow(): AsyncIterable<number> {
+			yield 1;
+			await sleep(10);
+			yield 2;
+			await sleep(10);
+			yield 3;
+			await sleep(100);
+			yield 4;
+		}
+
+		const signal = sleep(35);
+		const result = await collect(takeUntil(slow(), signal));
+		expect(result.length).toBeGreaterThanOrEqual(2);
+		expect(result.length).toBeLessThanOrEqual(3);
+	});
+
+	it("signal already resolved yields nothing", async () => {
+		const signal = Promise.resolve();
+		// Give microtask a chance to mark stopped
+		await sleep(1);
+		const result = await collect(takeUntil(fromArray([1, 2, 3]), signal));
+		expect(result).toEqual([]);
+	});
+
+	it("signal never resolves yields all", async () => {
+		const neverResolve = new Promise<void>(() => {});
+		const result = await collect(takeUntil(fromArray([1, 2, 3]), neverResolve));
+		expect(result).toEqual([1, 2, 3]);
+	});
+});
+
+describe("chunksTimeout", () => {
+	it("flushes by size before timeout", async () => {
+		const result = await collect(chunksTimeout(fromArray([1, 2, 3, 4, 5, 6]), 3, 5000));
+		expect(result).toEqual([
+			[1, 2, 3],
+			[4, 5, 6],
+		]);
+	});
+
+	it("flushes by timeout before size", async () => {
+		async function* slow(): AsyncIterable<number> {
+			yield 1;
+			yield 2;
+			await sleep(100);
+			yield 3;
+		}
+
+		const result = await collect(chunksTimeout(slow(), 10, 30));
+		expect(result.length).toBeGreaterThanOrEqual(2);
+		expect(result.flat().sort()).toEqual([1, 2, 3]);
+	});
+
+	it("empty source", async () => {
+		const result = await collect(chunksTimeout(fromArray([]), 5, 100));
+		expect(result).toEqual([]);
+	});
+});
+
+describe("peekable", () => {
+	it("peek returns next without consuming", async () => {
+		const p = peekable(fromArray([1, 2, 3]));
+		const peeked = await p.peek();
+		expect(peeked).toBe(1);
+		const result = await collect(p);
+		expect(result).toEqual([1, 2, 3]);
+	});
+
+	it("peek multiple times returns same value", async () => {
+		const p = peekable(fromArray([10, 20]));
+		expect(await p.peek()).toBe(10);
+		expect(await p.peek()).toBe(10);
+		expect(await p.peek()).toBe(10);
+	});
+
+	it("iteration after peek includes peeked value", async () => {
+		const p = peekable(fromArray([1, 2, 3]));
+		await p.peek();
+		const items: number[] = [];
+		for await (const item of p) {
+			items.push(item);
+		}
+		expect(items).toEqual([1, 2, 3]);
+	});
+
+	it("peek on empty returns undefined", async () => {
+		const p = peekable(fromArray<number>([]));
+		expect(await p.peek()).toBeUndefined();
+	});
+
+	it("full iteration without peek works normally", async () => {
+		const p = peekable(fromArray([1, 2, 3]));
+		const result = await collect(p);
+		expect(result).toEqual([1, 2, 3]);
+	});
+});
+
+describe("count", () => {
+	it("counts elements", async () => {
+		const result = await count(fromArray([1, 2, 3, 4, 5]));
+		expect(result).toBe(5);
+	});
+
+	it("empty source returns 0", async () => {
+		const result = await count(fromArray([]));
+		expect(result).toBe(0);
+	});
+});
+
+describe("any", () => {
+	it("returns true on first match (short-circuits)", async () => {
+		const checked: number[] = [];
+		const result = await any(fromArray([1, 2, 3, 4, 5]), (x) => {
+			checked.push(x);
+			return x === 2;
+		});
+		expect(result).toBe(true);
+		expect(checked).toEqual([1, 2]);
+	});
+
+	it("returns false when none match", async () => {
+		const result = await any(fromArray([1, 2, 3]), (x) => x > 10);
+		expect(result).toBe(false);
+	});
+
+	it("empty source returns false", async () => {
+		const result = await any(fromArray<number>([]), () => true);
+		expect(result).toBe(false);
+	});
+});
+
+describe("all", () => {
+	it("returns true when all match", async () => {
+		const result = await all(fromArray([2, 4, 6]), (x) => x % 2 === 0);
+		expect(result).toBe(true);
+	});
+
+	it("returns false on first non-match (short-circuits)", async () => {
+		const checked: number[] = [];
+		const result = await all(fromArray([2, 4, 5, 6]), (x) => {
+			checked.push(x);
+			return x % 2 === 0;
+		});
+		expect(result).toBe(false);
+		expect(checked).toEqual([2, 4, 5]);
+	});
+
+	it("empty source returns true", async () => {
+		const result = await all(fromArray<number>([]), () => false);
+		expect(result).toBe(true);
+	});
+});
+
+describe("forEach", () => {
+	it("calls fn for each element", async () => {
+		const seen: number[] = [];
+		await forEach(fromArray([1, 2, 3]), (x) => seen.push(x));
+		expect(seen).toEqual([1, 2, 3]);
+	});
+
+	it("empty source calls nothing", async () => {
+		let called = false;
+		await forEach(fromArray([]), () => { called = true; });
+		expect(called).toBe(false);
+	});
+});
+
+describe("forEachConcurrent", () => {
+	it("runs concurrently up to limit", async () => {
+		let maxConcurrent = 0;
+		let current = 0;
+		const results: number[] = [];
+
+		await forEachConcurrent(fromArray([1, 2, 3, 4, 5]), 2, async (x) => {
+			current++;
+			if (current > maxConcurrent) maxConcurrent = current;
+			await sleep(20);
+			results.push(x);
+			current--;
+		});
+
+		expect(results.sort()).toEqual([1, 2, 3, 4, 5]);
+		expect(maxConcurrent).toBeLessThanOrEqual(2);
+	});
+
+	it("empty source resolves immediately", async () => {
+		let called = false;
+		await forEachConcurrent(fromArray([]), 5, async () => { called = true; });
+		expect(called).toBe(false);
 	});
 });

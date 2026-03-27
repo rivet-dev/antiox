@@ -26,11 +26,6 @@ export {
 	TryRecvError,
 } from "./sync/mpsc";
 
-export {
-	channel as priorityChannel,
-	Sender as PrioritySender,
-	Receiver as PriorityReceiver,
-} from "./sync/priority_channel";
 export type { TrySendErrorKind, TryRecvErrorKind } from "./sync/mpsc";
 
 export {
@@ -63,20 +58,33 @@ export {
 	andThen,
 	filterMap,
 	flatten,
+	flatMap,
 	filter,
 	take,
 	skip,
 	takeWhile,
 	skipWhile,
+	mapWhile,
+	takeUntil,
+	enumerate,
+	scan,
 	bufferUnordered,
 	buffered,
 	merge,
 	chain,
 	zip,
 	chunks,
+	chunksTimeout,
 	throttle,
 	collect,
 	fold,
-	tap,
+	count,
+	any,
+	all,
+	forEach,
+	forEachConcurrent,
+	inspect,
 	pipe,
+	peekable,
+	Peekable,
 } from "./stream";
