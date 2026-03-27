@@ -55,6 +55,7 @@ spawn(async () => {
         msg.resTx.send(count);
         break;
       default:
+        // `unreachable(x: never)` provides compile-time exhaustiveness checking for switch statements
         unreachable(msg);
     }
   }
@@ -69,11 +70,7 @@ await tx.send({ type: "get", resTx });
 const value = await resRx;
 ```
 
-Bounded channels give you backpressure, `for await` gives you clean shutdown on disconnect, and oneshot channels give you typed request-response, all without locks or shared mutable state.
-
-### Exhaustive matching with `unreachable`
-
-The `unreachable(x: never)` function provides compile-time exhaustiveness checking for switch statements. If you add a new variant to `Msg` but forget to handle it, TypeScript will error because the unhandled variant is not assignable to `never`.
+Bounded channels give you backpressure, `for await` gives you clean shutdown on disconnect, and oneshot channels give you typed request-response.
 
 ## Modules
 
