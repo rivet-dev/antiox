@@ -1,6 +1,6 @@
 {
 	"name": "antiox",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Rust- and Tokio-like async primitives for TypeScript.",
 	"license": "MIT",
 	"type": "module",
