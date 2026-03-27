@@ -1,0 +1,64 @@
+{
+	"name": "antiox",
+	"version": "0.1.0",
+	"description": "I Wish I Was Writing Rust. Small utilities for Rust/Tokio-like primitives in TypeScript.",
+	"license": "Apache-2.0",
+	"type": "module",
+	"private": true,
+	"files": ["dist", "src", "package.json"],
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/mod.d.ts",
+				"default": "./dist/mod.js"
+			},
+			"require": {
+				"types": "./dist/mod.d.cts",
+				"default": "./dist/mod.cjs"
+			}
+		},
+		"./sync/mpsc": {
+			"import": {
+				"types": "./dist/sync/mpsc.d.ts",
+				"default": "./dist/sync/mpsc.js"
+			},
+			"require": {
+				"types": "./dist/sync/mpsc.d.cts",
+				"default": "./dist/sync/mpsc.cjs"
+			}
+		},
+		"./task": {
+			"import": {
+				"types": "./dist/task.d.ts",
+				"default": "./dist/task.js"
+			},
+			"require": {
+				"types": "./dist/task.d.cts",
+				"default": "./dist/task.cjs"
+			}
+		},
+		"./unreachable": {
+			"import": {
+				"types": "./dist/unreachable.d.ts",
+				"default": "./dist/unreachable.js"
+			},
+			"require": {
+				"types": "./dist/unreachable.d.cts",
+				"default": "./dist/unreachable.cjs"
+			}
+		}
+	},
+	"scripts": {
+		"build": "tsup",
+		"check-types": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@types/node": "^22.13.1",
+		"tsup": "^8.4.0",
+		"typescript": "^5.7.3"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/NathanFlurry/antiox.git"
+	}
+}
