@@ -1,0 +1,5 @@
+pre-commit:
+  commands:
+    generate-module-map:
+      glob: "src/**/*.ts"
+      run: pnpm build && pnpm generate-module-map && git add README.md

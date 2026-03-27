@@ -16,8 +16,8 @@ export async function* map<T, U>(
 	}
 }
 
-/** Apply an async transform to each element. */
-export async function* then<T, U>(
+/** Apply an async transform to each element. Named `andThen` to avoid JS thenable conflicts. */
+export async function* andThen<T, U>(
 	source: AsyncIterable<T>,
 	fn: (item: T) => Promise<U>,
 ): AsyncIterable<U> {

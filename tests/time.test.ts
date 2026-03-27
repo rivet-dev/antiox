@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { sleep, timeout, interval, TimeoutError } from "../src/time";
+import { sleep, timeout, timeoutAt, interval, TimeoutError } from "../src/time";
 
 describe("sleep", () => {
 	it("resolves after duration", async () => {
@@ -62,5 +62,21 @@ describe("interval", () => {
 			expect(elapsed).toBeLessThan(30);
 			break;
 		}
+	});
+});
+
+describe("timeoutAt", () => {
+	it("resolves if promise finishes before deadline", async () => {
+		const deadline = Date.now() + 200;
+		const result = await timeoutAt(deadline, Promise.resolve(42));
+		expect(result).toBe(42);
+	});
+
+	it("throws TimeoutError if deadline passes", async () => {
+		const deadline = Date.now() + 10;
+		const slow = new Promise<number>((resolve) =>
+			setTimeout(() => resolve(1), 500),
+		);
+		await expect(timeoutAt(deadline, slow)).rejects.toThrow(TimeoutError);
 	});
 });

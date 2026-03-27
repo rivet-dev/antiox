@@ -5,7 +5,12 @@ export * from "./sync/notify";
 export * from "./sync/rwlock";
 export * from "./sync/select";
 export * from "./sync/semaphore";
+export * from "./sync/once_cell";
+export * from "./sync/cancellation_token";
+export * from "./sync/drop_guard";
 export * from "./task";
+export * from "./collections/deque";
+export * from "./collections/binary_heap";
 
 // Re-export modules with name conflicts under namespaces or selectively.
 // These modules share names like SendError, RecvError, timeout. Use subpath imports for direct access.
@@ -16,9 +21,16 @@ export {
 	Receiver,
 	UnboundedSender,
 	UnboundedReceiver,
+	OwnedPermit,
 	TrySendError,
 	TryRecvError,
 } from "./sync/mpsc";
+
+export {
+	priorityChannel,
+	PrioritySender,
+	PriorityReceiver,
+} from "./sync/priority_channel";
 export type { TrySendErrorKind, TryRecvErrorKind } from "./sync/mpsc";
 
 export {
@@ -42,12 +54,13 @@ export {
 export {
 	sleep,
 	interval,
+	timeoutAt,
 	TimeoutError,
 } from "./time";
 
 export {
 	map,
-	then,
+	andThen,
 	filterMap,
 	flatten,
 	filter,

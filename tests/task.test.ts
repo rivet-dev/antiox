@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { spawn, JoinHandle, JoinSet, JoinError, yieldNow } from "../src/task";
+import { spawn, JoinHandle, JoinSet, JoinError, yieldNow, joinAll, tryJoinAll } from "../src/task";
 
 describe("spawn", () => {
 	it("returns a JoinHandle", () => {
@@ -141,5 +141,80 @@ describe("yieldNow", () => {
 		order.push(2);
 		await p;
 		expect(order).toEqual([1, 2, 3]);
+	});
+});
+
+describe("joinAll", () => {
+	it("returns all results in order", async () => {
+		const handles = [
+			spawn(async () => 1),
+			spawn(async () => 2),
+			spawn(async () => 3),
+		];
+		const results = await joinAll(handles);
+		expect(results).toEqual([1, 2, 3]);
+	});
+
+	it("waits for all tasks even if some finish early", async () => {
+		const handles = [
+			spawn(async () => {
+				return "fast";
+			}),
+			spawn(async () => {
+				await new Promise((r) => setTimeout(r, 30));
+				return "slow";
+			}),
+		];
+		const results = await joinAll(handles);
+		expect(results).toEqual(["fast", "slow"]);
+	});
+});
+
+describe("tryJoinAll", () => {
+	it("returns all results on success", async () => {
+		const handles = [
+			spawn(async () => 10),
+			spawn(async () => 20),
+			spawn(async () => 30),
+		];
+		const results = await tryJoinAll(handles);
+		expect(results).toEqual([10, 20, 30]);
+	});
+
+	it("cancels remaining on first failure", async () => {
+		let secondFinished = false;
+		const handles = [
+			spawn(async () => {
+				throw new Error("boom");
+			}),
+			spawn(async (signal) => {
+				await new Promise<void>((resolve, reject) => {
+					const timer = setTimeout(() => {
+						secondFinished = true;
+						resolve();
+					}, 50);
+					signal.addEventListener("abort", () => {
+						clearTimeout(timer);
+						reject(new Error("aborted"));
+					});
+				});
+				return 2;
+			}),
+		];
+
+		await expect(tryJoinAll(handles)).rejects.toThrow();
+		await new Promise((r) => setTimeout(r, 10));
+		expect(secondFinished).toBe(false);
+	});
+
+	it("the error from the failed task is thrown", async () => {
+		const handles = [
+			spawn(async () => 1),
+			spawn(async () => {
+				throw new Error("task failed");
+			}),
+		];
+
+		await expect(tryJoinAll(handles)).rejects.toThrow(JoinError);
 	});
 });

@@ -58,6 +58,22 @@
 			"import": { "types": "./dist/sync/select.d.ts", "default": "./dist/sync/select.js" },
 			"require": { "types": "./dist/sync/select.d.cts", "default": "./dist/sync/select.cjs" }
 		},
+		"./sync/once_cell": {
+			"import": { "types": "./dist/sync/once_cell.d.ts", "default": "./dist/sync/once_cell.js" },
+			"require": { "types": "./dist/sync/once_cell.d.cts", "default": "./dist/sync/once_cell.cjs" }
+		},
+		"./sync/cancellation_token": {
+			"import": { "types": "./dist/sync/cancellation_token.d.ts", "default": "./dist/sync/cancellation_token.js" },
+			"require": { "types": "./dist/sync/cancellation_token.d.cts", "default": "./dist/sync/cancellation_token.cjs" }
+		},
+		"./sync/drop_guard": {
+			"import": { "types": "./dist/sync/drop_guard.d.ts", "default": "./dist/sync/drop_guard.js" },
+			"require": { "types": "./dist/sync/drop_guard.d.cts", "default": "./dist/sync/drop_guard.cjs" }
+		},
+		"./sync/priority_channel": {
+			"import": { "types": "./dist/sync/priority_channel.d.ts", "default": "./dist/sync/priority_channel.js" },
+			"require": { "types": "./dist/sync/priority_channel.d.cts", "default": "./dist/sync/priority_channel.cjs" }
+		},
 		"./task": {
 			"import": { "types": "./dist/task.d.ts", "default": "./dist/task.js" },
 			"require": { "types": "./dist/task.d.cts", "default": "./dist/task.cjs" }
@@ -69,13 +85,21 @@
 		"./stream": {
 			"import": { "types": "./dist/stream.d.ts", "default": "./dist/stream.js" },
 			"require": { "types": "./dist/stream.d.cts", "default": "./dist/stream.cjs" }
+		},
+		"./collections/deque": {
+			"import": { "types": "./dist/collections/deque.d.ts", "default": "./dist/collections/deque.js" },
+			"require": { "types": "./dist/collections/deque.d.cts", "default": "./dist/collections/deque.cjs" }
+		},
+		"./collections/binary_heap": {
+			"import": { "types": "./dist/collections/binary_heap.d.ts", "default": "./dist/collections/binary_heap.js" },
+			"require": { "types": "./dist/collections/binary_heap.d.cts", "default": "./dist/collections/binary_heap.cjs" }
 		}
 	},
 	"scripts": {
 		"build": "tsup",
 		"check-types": "tsc --noEmit",
 		"test": "vitest run",
-		"bundle-size": "tsx scripts/bundle-size.ts"
+		"generate-module-map": "tsx scripts/generate-module-map.ts"
 	},
 	"devDependencies": {
 		"@types/node": "^22.13.1",

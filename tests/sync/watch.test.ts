@@ -103,4 +103,42 @@ describe("watch", () => {
 		rx.close();
 		expect(tx.isClosed()).toBe(true);
 	});
+
+	it("sendIfModified returns true and wakes receivers when predicate returns true", async () => {
+		const [tx, rx] = watch({ count: 0 });
+		rx.borrowAndUpdate();
+
+		let woken = false;
+		const p = rx.changed().then(() => {
+			woken = true;
+		});
+
+		const result = tx.sendIfModified((current) => {
+			current.count = 5;
+			return true;
+		});
+
+		expect(result).toBe(true);
+		await p;
+		expect(woken).toBe(true);
+		expect(rx.borrow().count).toBe(5);
+	});
+
+	it("sendIfModified returns false and does not wake when predicate returns false", async () => {
+		const [tx, rx] = watch({ count: 0 });
+		rx.borrowAndUpdate();
+
+		let woken = false;
+		rx.changed().then(() => {
+			woken = true;
+		});
+
+		const result = tx.sendIfModified((_current) => {
+			return false;
+		});
+
+		expect(result).toBe(false);
+		await delay(20);
+		expect(woken).toBe(false);
+	});
 });

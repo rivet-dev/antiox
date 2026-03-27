@@ -80,6 +80,24 @@ export async function timeout<T>(ms: number, promise: Promise<T>): Promise<T> {
 }
 
 /**
+ * Race a promise against an absolute deadline.
+ *
+ * Like {@link timeout} but takes a `Date` or epoch milliseconds instead of a
+ * relative duration.
+ *
+ * @param deadline - Absolute time as Date or epoch ms.
+ * @param promise - The promise to race against the deadline.
+ * @throws {TimeoutError} If the deadline passes first.
+ */
+export async function timeoutAt<T>(
+	deadline: Date | number,
+	promise: Promise<T>,
+): Promise<T> {
+	const ms = (typeof deadline === "number" ? deadline : deadline.getTime()) - Date.now();
+	return timeout(Math.max(ms, 0), promise);
+}
+
+/**
  * Create an async iterable that yields incrementing tick counts with backpressure.
  *
  * Unlike `setInterval`, the next tick does not start until the consumer has

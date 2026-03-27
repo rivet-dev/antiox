@@ -2,9 +2,9 @@
   <img src=".github/media/antiox.svg" alt="antiox" />
 </p>
 
-<h2 align="center">Antiox</h2>
+<h3 align="center">Antiox</h3>
 
-<h3 align="center">Zero-Cost Rust and Tokio-like primitives for TypeScript (Anti Oxide)</h3>
+<h3 align="center">Zero-Cost Rust and Tokio-like primitives for TypeScript</h3>
 
 <p align="center">
   No custom DSL, no wrapper types, no extra allocations, and no dependencies.<br />
@@ -67,26 +67,35 @@ Bounded channels give you backpressure, `for await` gives you clean shutdown on 
 
 ## Modules
 
-| Module | Mirrors | Min | Gzip | Docs |
-|--------|---------|-----|------|------|
-| [`antiox/panic`](#antioxpanic) | `std::panic!`, `std::todo!`, `std::unreachable!` | 273 B | 199 B | [std](https://doc.rust-lang.org/std/) |
-| [`antiox/sync/mpsc`](#antioxsyncmpsc) | `tokio::sync::mpsc` | 4.6 KB | 1.3 KB | [docs.rs](https://docs.rs/tokio/latest/tokio/sync/mpsc/) |
-| [`antiox/sync/oneshot`](#antioxsynconeshot) | `tokio::sync::oneshot` | 1.7 KB | 625 B | [docs.rs](https://docs.rs/tokio/latest/tokio/sync/oneshot/) |
-| [`antiox/sync/watch`](#antioxsyncwatch) | `tokio::sync::watch` | 1.5 KB | 635 B | [docs.rs](https://docs.rs/tokio/latest/tokio/sync/watch/) |
-| [`antiox/sync/broadcast`](#antioxsyncbroadcast) | `tokio::sync::broadcast` | 2.4 KB | 936 B | [docs.rs](https://docs.rs/tokio/latest/tokio/sync/broadcast/) |
-| [`antiox/sync/semaphore`](#antioxsyncsemaphore) | `tokio::sync::Semaphore` | 2.0 KB | 845 B | [docs.rs](https://docs.rs/tokio/latest/tokio/sync/struct.Semaphore.html) |
-| [`antiox/sync/notify`](#antioxsyncnotify) | `tokio::sync::Notify` | 934 B | 466 B | [docs.rs](https://docs.rs/tokio/latest/tokio/sync/struct.Notify.html) |
-| [`antiox/sync/mutex`](#antioxsyncmutex) | `tokio::sync::Mutex` | 1.4 KB | 606 B | [docs.rs](https://docs.rs/tokio/latest/tokio/sync/struct.Mutex.html) |
-| [`antiox/sync/rwlock`](#antioxsyncrwlock) | `tokio::sync::RwLock` | 2.2 KB | 778 B | [docs.rs](https://docs.rs/tokio/latest/tokio/sync/struct.RwLock.html) |
-| [`antiox/sync/barrier`](#antioxsyncbarrier) | `tokio::sync::Barrier` | 1.1 KB | 528 B | [docs.rs](https://docs.rs/tokio/latest/tokio/sync/struct.Barrier.html) |
-| [`antiox/sync/select`](#antioxsyncselect) | `tokio::select!` | 338 B | 260 B | [docs.rs](https://docs.rs/tokio/latest/tokio/macro.select.html) |
-| [`antiox/task`](#antioxtask) | `tokio::task` | 1.7 KB | 795 B | [docs.rs](https://docs.rs/tokio/latest/tokio/task/) |
-| [`antiox/time`](#antioxtime) | `tokio::time` | 807 B | 469 B | [docs.rs](https://docs.rs/tokio/latest/tokio/time/) |
-| [`antiox/stream`](#antioxstream) | `tokio_stream` / `futures::stream` | 9.7 KB | 2.9 KB | [docs.rs](https://docs.rs/tokio-stream/latest/tokio_stream/) |
+<!-- MODULE_TABLE_START -->
+| Module | Rust Equivalent | Minified | Gzip |
+|--------|-----------------|----------|------|
+| [`antiox/panic`](#antioxpanic) | [`std::panic!`, `std::todo!`, `std::unreachable!`](https://doc.rust-lang.org/std/) | 273 B | 199 B |
+| [`antiox/sync/mpsc`](#antioxsyncmpsc) | [`tokio::sync::mpsc`](https://docs.rs/tokio/latest/tokio/sync/mpsc/) | 5.1 KB | 1.4 KB |
+| [`antiox/sync/oneshot`](#antioxsynconeshot) | [`tokio::sync::oneshot`](https://docs.rs/tokio/latest/tokio/sync/oneshot/) | 1.7 KB | 625 B |
+| [`antiox/sync/watch`](#antioxsyncwatch) | [`tokio::sync::watch`](https://docs.rs/tokio/latest/tokio/sync/watch/) | 1.7 KB | 677 B |
+| [`antiox/sync/broadcast`](#antioxsyncbroadcast) | [`tokio::sync::broadcast`](https://docs.rs/tokio/latest/tokio/sync/broadcast/) | 2.4 KB | 936 B |
+| [`antiox/sync/semaphore`](#antioxsyncsemaphore) | [`tokio::sync::Semaphore`](https://docs.rs/tokio/latest/tokio/sync/struct.Semaphore.html) | 2.0 KB | 845 B |
+| [`antiox/sync/notify`](#antioxsyncnotify) | [`tokio::sync::Notify`](https://docs.rs/tokio/latest/tokio/sync/struct.Notify.html) | 934 B | 466 B |
+| [`antiox/sync/mutex`](#antioxsyncmutex) | [`tokio::sync::Mutex`](https://docs.rs/tokio/latest/tokio/sync/struct.Mutex.html) | 1.4 KB | 606 B |
+| [`antiox/sync/rwlock`](#antioxsyncrwlock) | [`tokio::sync::RwLock`](https://docs.rs/tokio/latest/tokio/sync/struct.RwLock.html) | 2.2 KB | 778 B |
+| [`antiox/sync/barrier`](#antioxsyncbarrier) | [`tokio::sync::Barrier`](https://docs.rs/tokio/latest/tokio/sync/struct.Barrier.html) | 1.1 KB | 528 B |
+| [`antiox/sync/select`](#antioxsyncselect) | [`tokio::select!`](https://docs.rs/tokio/latest/tokio/macro.select.html) | 338 B | 260 B |
+| [`antiox/sync/once_cell`](#antioxsynconcecell) | [`tokio::sync::OnceCell`](https://docs.rs/tokio/latest/tokio/sync/struct.OnceCell.html) | 699 B | 355 B |
+| [`antiox/sync/cancellation_token`](#antioxsynccancellationtoken) | [`tokio_util::sync::CancellationToken`](https://docs.rs/tokio-util/latest/tokio_util/sync/struct.CancellationToken.html) | 623 B | 357 B |
+| [`antiox/sync/drop_guard`](#antioxsyncdropguard) | [`tokio_util::sync::DropGuard`](https://docs.rs/tokio-util/latest/tokio_util/sync/struct.DropGuard.html) | 200 B | 169 B |
+| [`antiox/sync/priority_channel`](#antioxsyncprioritychannel) | Priority channel | 2.6 KB | 1.0 KB |
+| [`antiox/task`](#antioxtask) | [`tokio::task`](https://docs.rs/tokio/latest/tokio/task/) | 2.0 KB | 932 B |
+| [`antiox/time`](#antioxtime) | [`tokio::time`](https://docs.rs/tokio/latest/tokio/time/) | 936 B | 530 B |
+| [`antiox/stream`](#antioxstream) | [`tokio_stream` / `futures::stream`](https://docs.rs/tokio-stream/latest/tokio_stream/) | 10.4 KB | 3.0 KB |
+| [`antiox/collections/deque`](#antioxcollectionsdeque) | [`std::collections::VecDeque`](https://doc.rust-lang.org/std/collections/struct.VecDeque.html) | 1.3 KB | 493 B |
+| [`antiox/collections/binary_heap`](#antioxcollectionsbinaryheap) | [`std::collections::BinaryHeap`](https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html) | 994 B | 492 B |
+<!-- MODULE_TABLE_END -->
 
----
+## Documentation
 
-### `antiox/sync/mpsc`
+<details>
+<summary><code>antiox/sync/mpsc</code></summary>
 
 Multi-producer, single-consumer channels with backpressure and disconnection detection. Mirrors `tokio::sync::mpsc`.
 
@@ -113,7 +122,10 @@ const [utx, urx] = unboundedChannel<number>();
 utx.send(42); // sync, never blocks
 ```
 
-### `antiox/task`
+</details>
+
+<details>
+<summary><code>antiox/task</code></summary>
 
 Task spawning with cooperative cancellation via AbortSignal. Mirrors `tokio::task`.
 
@@ -145,7 +157,10 @@ for await (const result of set) {
 await yieldNow();
 ```
 
-### `antiox/panic`
+</details>
+
+<details>
+<summary><code>antiox/panic</code></summary>
 
 Diverging functions for halting execution. Mirrors `panic!`, `todo!`, and `unreachable!` from Rust.
 
@@ -177,7 +192,10 @@ function move(dir: Direction) {
 }
 ```
 
-### `antiox/sync/oneshot`
+</details>
+
+<details>
+<summary><code>antiox/sync/oneshot</code></summary>
 
 Single-use channel. Send exactly one value. Receiver is awaitable.
 
@@ -189,7 +207,10 @@ tx.send("done");
 const value = await rx; // "done"
 ```
 
-### `antiox/sync/watch`
+</details>
+
+<details>
+<summary><code>antiox/sync/watch</code></summary>
 
 Single-value broadcast. One sender updates a value, many receivers observe changes.
 
@@ -204,7 +225,10 @@ await rx.changed();
 console.log(rx.borrowAndUpdate()); // "updated"
 ```
 
-### `antiox/sync/broadcast`
+</details>
+
+<details>
+<summary><code>antiox/sync/broadcast</code></summary>
 
 Multi-producer, multi-consumer bounded channel. Every receiver gets every message.
 
@@ -219,7 +243,10 @@ console.log(await rx1.recv()); // "hello"
 console.log(await rx2.recv()); // "hello"
 ```
 
-### `antiox/sync/semaphore`
+</details>
+
+<details>
+<summary><code>antiox/sync/semaphore</code></summary>
 
 Counting semaphore for limiting concurrency.
 
@@ -232,7 +259,10 @@ const permit = await sem.acquire();
 permit.release();
 ```
 
-### `antiox/sync/notify`
+</details>
+
+<details>
+<summary><code>antiox/sync/notify</code></summary>
 
 Simplest synchronization primitive. Wake one or all waiters.
 
@@ -246,7 +276,10 @@ await notify.notified();
 notify.notifyOne();
 ```
 
-### `antiox/sync/mutex`
+</details>
+
+<details>
+<summary><code>antiox/sync/mutex</code></summary>
 
 Async mutex guaranteeing exclusive access across await points.
 
@@ -259,7 +292,10 @@ guard.value = { count: guard.value.count + 1 };
 guard.release();
 ```
 
-### `antiox/sync/rwlock`
+</details>
+
+<details>
+<summary><code>antiox/sync/rwlock</code></summary>
 
 Multiple concurrent readers OR one exclusive writer.
 
@@ -276,7 +312,10 @@ writer.value = { data: "world" };
 writer.release();
 ```
 
-### `antiox/sync/barrier`
+</details>
+
+<details>
+<summary><code>antiox/sync/barrier</code></summary>
 
 N tasks wait, all released when the Nth arrives.
 
@@ -288,7 +327,10 @@ const result = await barrier.wait();
 if (result.isLeader()) console.log("I'm the leader");
 ```
 
-### `antiox/sync/select`
+</details>
+
+<details>
+<summary><code>antiox/sync/select</code></summary>
 
 Race multiple async branches, cancel losers. TypeScript narrows the result type.
 
@@ -306,7 +348,10 @@ if (result.key === "msg") {
 }
 ```
 
-### `antiox/time`
+</details>
+
+<details>
+<summary><code>antiox/time</code></summary>
 
 Timer primitives with AbortSignal integration.
 
@@ -327,7 +372,10 @@ for await (const tick of interval(1000)) {
 }
 ```
 
-### `antiox/stream`
+</details>
+
+<details>
+<summary><code>antiox/stream</code></summary>
 
 Async stream combinators. All functions take and return `AsyncIterable<T>`. Zero wrapper objects.
 
@@ -352,6 +400,8 @@ for await (const item of merge(stream1, stream2, stream3)) {
   console.log(item);
 }
 ```
+
+</details>
 
 ## Filling the Gaps
 
