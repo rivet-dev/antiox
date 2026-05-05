@@ -2,13 +2,26 @@ import { Semaphore } from "./sync/semaphore";
 import { unboundedChannel } from "./sync/mpsc";
 import { sleep as timeSleep, TimeoutError } from "./time";
 
-export async function* map<T, U>(
+export function map<T, U>(
 	source: AsyncIterable<T>,
 	fn: (item: T) => U,
 ): AsyncIterable<U> {
-	for await (const item of source) {
-		yield fn(item);
-	}
+	return {
+		[Symbol.asyncIterator]() {
+			const iter = source[Symbol.asyncIterator]();
+			return {
+				async next() {
+					const { done, value } = await iter.next();
+					if (done) return { done: true, value: undefined } as IteratorReturnResult<undefined>;
+					return { done: false, value: fn(value) };
+				},
+				async return(val?: any) {
+					await iter.return?.(val);
+					return { done: true as const, value: undefined };
+				},
+			};
+		},
+	};
 }
 
 /** Named `andThen` to avoid JS thenable conflicts with `then`. */
@@ -113,9 +126,15 @@ export function bufferUnordered<T>(
 	let inFlight = 0;
 
 	const drainSource = async () => {
+		const iter = source[Symbol.asyncIterator]();
 		try {
-			for await (const promise of source) {
+			while (true) {
 				const permit = await sem.acquire();
+				const { done, value: promise } = await iter.next();
+				if (done) {
+					permit.release();
+					break;
+				}
 				inFlight++;
 				Promise.resolve(promise).then(
 					(value: T) => {
@@ -163,9 +182,15 @@ export function buffered<T>(
 	let nextIndex = 0;
 
 	const drainSource = async () => {
+		const iter = source[Symbol.asyncIterator]();
 		try {
-			for await (const promise of source) {
+			while (true) {
 				const permit = await sem.acquire();
+				const { done, value: promise } = await iter.next();
+				if (done) {
+					permit.release();
+					break;
+				}
 				const idx = nextIndex++;
 				inFlight++;
 				Promise.resolve(promise).then(

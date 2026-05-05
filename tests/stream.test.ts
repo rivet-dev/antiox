@@ -330,6 +330,68 @@ describe("map - edge cases", () => {
 		const result = await collect(map(fromArray([42]), (x) => x.toString()));
 		expect(result).toEqual(["42"]);
 	});
+
+	it("does not auto-await promises returned by fn", async () => {
+		const mapped = map(fromArray([1, 2, 3]), (x) => Promise.resolve(x * 10));
+		const results: unknown[] = [];
+		for await (const item of mapped) {
+			expect(item).toBeInstanceOf(Promise);
+			results.push(await item);
+		}
+		expect(results).toEqual([10, 20, 30]);
+	});
+
+	it("composes with bufferUnordered for concurrent async mapping", async () => {
+		const delays = [30, 10, 20];
+		const source = fromArray([0, 1, 2]);
+
+		const mapped = map(source, (i) =>
+			new Promise<number>((resolve) => setTimeout(() => resolve(i), delays[i])),
+		);
+		const results = await collect(bufferUnordered(mapped, 3));
+
+		expect(results.sort()).toEqual([0, 1, 2]);
+	});
+
+	it("composes with bufferUnordered respecting concurrency", async () => {
+		let maxConcurrent = 0;
+		let current = 0;
+
+		const source = fromArray([0, 1, 2, 3, 4, 5]);
+		const mapped = map(source, (i) =>
+			new Promise<number>((resolve) => {
+				current++;
+				if (current > maxConcurrent) maxConcurrent = current;
+				setTimeout(() => {
+					current--;
+					resolve(i);
+				}, 20);
+			}),
+		);
+
+		const results = await collect(bufferUnordered(mapped, 2));
+		expect(results.sort()).toEqual([0, 1, 2, 3, 4, 5]);
+		expect(maxConcurrent).toBeLessThanOrEqual(2);
+	});
+
+	it("delegates return to source iterator on early break", async () => {
+		let cleanedUp = false;
+		async function* source(): AsyncIterable<number> {
+			try {
+				yield 1;
+				yield 2;
+				yield 3;
+			} finally {
+				cleanedUp = true;
+			}
+		}
+
+		const mapped = map(source(), (x) => x * 2);
+		for await (const item of mapped) {
+			if (item === 2) break;
+		}
+		expect(cleanedUp).toBe(true);
+	});
 });
 
 describe("filter - edge cases", () => {
